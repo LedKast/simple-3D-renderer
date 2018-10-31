@@ -64,26 +64,20 @@ Matrix<> scaling(double kx, double ky)
 // mapping (различные виды отражений) - по желанию, для создания матриц отражения можно использовать функцию Scaling.
 Matrix<> mapping(reftype type)
 {
-    double T[9];
+    double T[9]= {
+            1, 0, 0,
+            0, 1, 0,
+            0, 0, 1};
     switch (type)
     {
         case MAPX:
-            T[] = {
-                1, 0, 0,
-                0, -1, 0,
-                0, 0, 1};
+            T[4] = -1;
             break;
         case MAPY:
-            T[] = {
-                -1, 0, 0,
-                0, 1, 0,
-                0, 0, 1};
+            T[0] = -1;
             break;
         case MAP00:
-            T[] = {
-                -1, 0, 0,
-                0, -1, 0,
-                0, 0, 1};
+            T[0] = T[4] = -1;
             break;
     }
 
