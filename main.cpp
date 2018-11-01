@@ -9,18 +9,19 @@ int main()
 {
 /*
 	Matrix<int> M(2);
-	cout << "Input M ->\n ";
+	cout << "Input M ->\rows ";
 	cin >> M;
 */
-	double a[4] = {
-	    1, -2,
-        3, 0};
-	Matrix<> A(2, a);
+	double a[6] = {
+	    1, -2, 7,
+        3, 0, 6};
+	Matrix<> A(2, 3, a);
 
-	double b[4] = {
+	double b[6] = {
         2, 2,
-        0, 1};
-	Matrix<> B(2, b);
+        0, 1,
+        7, 7};
+	Matrix<> B(3, 2, b);
 
 	Matrix<> C = A*B;
 	cout
@@ -31,6 +32,5 @@ int main()
 		<< endl << "A-B =" << endl << (A-B)
 		<< endl << "T(1,2) =" << endl << translation(1, 2);
 
-	//system("pause");
 	return 0;
 }

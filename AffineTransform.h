@@ -44,11 +44,12 @@ Matrix<> rotation(double t)
 // rotation(c, s) - поворот на угол, косинус и синус которого пропорциональны величинам c и s;
 Matrix<> rotation(double c, double s)
 {
-//    double T[9] = {
-//            cos(t), -sin(t), 0,
-//            sin(t), cos(t), 0,
-//            0, 0, 1};
-//    return Matrix<>(3, T);
+    double d = 1.0/sqrt(c*c+s*s);
+    double T[9] = {
+            c*d, -s*d, 0,
+            s*d, c*d, 0,
+            0, 0, 1};
+    return Matrix<>(3, T);
 }
 
 // scaling(kx, ky) - масштабирование;

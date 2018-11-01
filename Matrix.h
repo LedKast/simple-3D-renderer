@@ -17,16 +17,20 @@ template <typename Cell>
 class Matrix
 {
 private:
-	int size;
+    // rows - строка
+    // cols - столбец
+	int rows, cols; // матрица размера ROWxCOLUMN
 	Cell **cells;
-	void AllocateCells(int);    // Выделение памяти
-	void FreeCells();           // Очистка
+    void AllocateCells(int rows, int cols);    // Выделение памяти
+	void FreeCells();               // Очистка
 public:
-	Matrix() : size(0), cells(nullptr) {}	// Конструктор по умолчанию
-	Matrix(const Matrix&);					// Конструктор копирования
-	explicit Matrix(int);					// Конструктор нулевой матрицы
-	Matrix(int, Cell*);						// Конструктор матрицы из списка
-	~Matrix();								// Деструктор
+	Matrix() : rows(0), cols(0), cells(nullptr) {}		    // Конструктор по умолчанию
+	Matrix(const Matrix&);					                // Конструктор копирования
+	explicit Matrix(int rows, int cols);					// Конструктор нулевой матрицы
+	explicit Matrix(int rows);					            // Конструктор нулевой квадратной матрицы
+	Matrix(int rows, int cols, Cell* list);					// Конструктор матрицы из списка
+    Matrix(int rows, Cell* list);                           // Конструктор квадратной матрицы из списка
+	~Matrix();								                // Деструктор
 
 	Cell& operator() (int i, int j) { return cells[i-1][j-1]; } // получение элемента матрицы (индексация с 1)
 	
@@ -43,30 +47,49 @@ public:
 template <typename Cell>
 Matrix<Cell>::Matrix(const Matrix<Cell>& M)
 {
-	AllocateCells(M.size);
-	for (int i=0; i<size; i++)
-        for (int j=0; j<size; j++)
+	AllocateCells(M.rows, M.cols);
+	for (int i=0; i < rows; i++)
+        for (int j=0; j < cols; j++)
             cells[i][j] = M.cells[i][j];
 }
 
 // Конструктор нулевой матрицы
 template <typename Cell>
-Matrix<Cell>::Matrix(int Size)
+Matrix<Cell>::Matrix(int rows, int cols)
 {
-	AllocateCells(Size);
-	for (int i=0; i<size; i++)
-        for (int j=0; j<size; j++)
+	AllocateCells(rows, cols);
+	for (int i=0; i < rows; i++)
+        for (int j=0; j < cols; j++)
+            cells[i][j] = 0;
+}
+
+// Конструктор нулевой квадратной матрицы
+template <typename Cell>
+Matrix<Cell>::Matrix(int rows)
+{
+    AllocateCells(rows, rows);
+    for (int i=0; i < rows; i++)
+        for (int j=0; j < rows; j++)
             cells[i][j] = 0;
 }
 
 // Конструктор матрицы из списка
 template <typename Cell>
-Matrix<Cell>::Matrix(int Size, Cell* list)
+Matrix<Cell>::Matrix(int rows, int cols, Cell* list)
 {
-    AllocateCells(Size);
-    for (int i = 0; i < size; i++)
-        for (int j = 0; j < size; j++)
-            cells[i][j] = list[size*i + j];
+    AllocateCells(rows, cols);
+    for (int i = 0; i < rows; i++)
+        for (int j = 0; j < cols; j++)
+            cells[i][j] = list[cols*i + j];
+}
+
+template <typename Cell>
+Matrix<Cell>::Matrix(int rows, Cell* list)
+{
+    AllocateCells(rows, rows);
+    for (int i = 0; i < rows; i++)
+        for (int j = 0; j < rows; j++)
+            cells[i][j] = list[rows*i + j];
 }
 
 // Деструктор
@@ -79,13 +102,13 @@ Matrix<Cell>::~Matrix()
 template <typename Cell>
 Matrix<Cell>& Matrix<Cell>::operator=(const Matrix& M)
 {
-	if ( size != M.size )
+	if (rows != M.rows || cols != M.cols)
 	{
 		FreeCells();
-		AllocateCells(M.size);
+		AllocateCells(M.rows, M.cols);
 	}
-	for (int i=0; i<size; i++)
-        for (int j=0; j<size; j++)
+	for (int i=0; i<rows; i++)
+        for (int j=0; j<cols; j++)
             cells[i][j] = M.cells[i][j];
 	return *this;
 }
@@ -94,10 +117,10 @@ template <typename Cell>
 Matrix<Cell> Matrix<Cell>::operator+(const Matrix& M)
 {
 	Matrix<Cell> res(*this);
-	if ( size == M.size )
+	if (rows == M.rows && cols == M.cols)
 	{
-		for (int i=0; i<size; i++)
-            for (int j=0; j<size; j++)
+		for (int i=0; i < rows; i++)
+            for (int j=0; j < cols; j++)
                 res.cells[i][j] += M.cells[i][j];
 	}
 	return res;
@@ -107,10 +130,10 @@ template <typename Cell>
 Matrix<Cell> Matrix<Cell>::operator-(const Matrix& M)
 {
     Matrix<Cell> res(*this);
-    if ( size == M.size )
+    if (rows == M.rows && cols == M.cols)
     {
-        for (int i=0; i<size; i++)
-            for (int j=0; j<size; j++)
+        for (int i=0; i < rows; i++)
+            for (int j=0; j < cols; j++)
                 res.cells[i][j] -= M.cells[i][j];
     }
     return res;
@@ -119,42 +142,43 @@ Matrix<Cell> Matrix<Cell>::operator-(const Matrix& M)
 template <typename Cell>
 Matrix<Cell> Matrix<Cell>::operator*(const Matrix& M)
 {
-    Matrix<Cell> res(*this);
-    if ( size == M.size )
-    {
-        for (int i=0; i<size; i++)
-            for (int j=0; j<size; j++)
-                res.cells[i][j] *= M.cells[j][i];
-    }
+    Matrix<Cell> res(rows, rows);
+
+    if ( rows == M.cols )
+        for (int i=0; i < rows; i++)
+            for (int j = 0; j < rows; j++)
+                for (int k = 0; k < cols; k++)
+                    res.cells[i][j] += this->cells[i][k] * M.cells[k][j];
     return res;
 }
 
 // Выделение памяти для матрицы
 template <typename Cell>
-void Matrix<Cell>::AllocateCells(int Size)
+void Matrix<Cell>::AllocateCells(int rows, int cols)
 {
-	cells = new Cell*[Size];
-	for (int i=0; i < Size; i++)
-		cells[i] = new Cell[Size];
-	size = Size;
+	cells = new Cell*[rows];
+	for (int i=0; i < rows; i++)
+		cells[i] = new Cell[cols];
+	this->rows = rows;
+	this->cols = cols;
 }
 
 // Освобождение памяти
 template <typename Cell>
 void Matrix<Cell>::FreeCells()
 {
-	for (int i=0; i < size; i++)
+	for (int i=0; i < rows; i++)
 		delete cells[i];
 	delete[] cells;
-	size = 0;
+	rows = cols = 0;
 }
 
 // Ввод матрицы
 template <typename Cell>
 istream& operator>> (istream& fi, Matrix<Cell>& M)
 {
-	for (int i=0; i < M.size; i++)
-		for (int j=0; j < M.size; j++)
+	for (int i=0; i < M.rows; i++)
+		for (int j=0; j < M.cols; j++)
 			fi >> M.cells[i][j];
 	return fi;
 }
@@ -163,10 +187,10 @@ istream& operator>> (istream& fi, Matrix<Cell>& M)
 template <typename Cell>
 ostream& operator<< (ostream& fo, const Matrix<Cell>& M)
 {
-	for (int i=0; i<M.size; i++)
+	for (int i=0; i < M.rows; i++)
 	{
 		fo << "  ";
-		for (int j=0; j<M.size; j++)
+		for (int j=0; j < M.cols; j++)
 			fo << M.cells[i][j] << " \t";
 		fo << endl;
 	}
