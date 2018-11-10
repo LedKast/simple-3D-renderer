@@ -145,27 +145,27 @@ public:
 	}
 
 	// Отрисовка координатных осей
-	void Axes(HDC dc)
-	{
-		HPEN pen = (HPEN)SelectObject(dc, CreatePen(PS_SOLID, 1, RGB(180, 180, 180)));
-		// вертикальная линия
-		MoveToEx(dc, X0, 0, nullptr);
-        WIN32::LineTo(dc, X0, H);
-
-		// горизонтальная
-		MoveToEx(dc, 0, Y0, nullptr);
-        WIN32::LineTo(dc, W, Y0);
-		DeleteObject(SelectObject(dc, pen));
-	}
-
-	// Отрисовка полярной оси
-	void polarAxes(HDC dc)
-	{
-		HPEN pen = (HPEN)SelectObject(dc, CreatePen(PS_SOLID, 1, RGB(180, 180, 180)));
-		MoveToEx(dc, X0, Y0, nullptr);
-        WIN32::LineTo(dc, W, Y0);
-		DeleteObject(SelectObject(dc, pen));
-	}
+//	void Axes(HDC dc)
+//	{
+//		HPEN pen = (HPEN)SelectObject(dc, CreatePen(PS_SOLID, 1, RGB(180, 180, 180)));
+//		// вертикальная линия
+//		MoveToEx(dc, X0, 0, nullptr);
+//        WIN32::LineTo(dc, X0, H);
+//
+//		// горизонтальная
+//		MoveToEx(dc, 0, Y0, nullptr);
+//        WIN32::LineTo(dc, W, Y0);
+//		DeleteObject(SelectObject(dc, pen));
+//	}
+//
+//	// Отрисовка полярной оси
+//	void polarAxes(HDC dc)
+//	{
+//		HPEN pen = (HPEN)SelectObject(dc, CreatePen(PS_SOLID, 1, RGB(180, 180, 180)));
+//		MoveToEx(dc, X0, Y0, nullptr);
+//        WIN32::LineTo(dc, W, Y0);
+//		DeleteObject(SelectObject(dc, pen));
+//	}
 };
 
 #endif // CAMERA_2D_H

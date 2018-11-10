@@ -1,4 +1,5 @@
-﻿#include <windows.h>
+﻿// aka 2DPlotViewer
+#include <windows.h>
 #include <windowsx.h>
 
 
@@ -10,9 +11,11 @@
 #include "Math/Matrix.h"
 #include "Math/AffineTransform.h"
 
-
+#define PROJECTPATH "d:/DOCs/3_course/CGraphics/Lab_2_2D_Scene/"
 #define WINW 480
 #define WINH 320
+
+Scene2D scene(WINW/2, WINH/2, DEFSCALE, DEFSCALE + 50);
 
 LRESULT _stdcall WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);						// прототип оконной процедуры
 int _stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)		// основнаRя процедура
@@ -33,10 +36,13 @@ int _stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 	HWND hWnd = CreateWindow(						// hWnd - дескриптор, идентифицирующий окно; функция создания окна заполняет дескриптор hWnd ненулевым значением
 		(LPCSTR)"MainWindowClass",					// имя оконного класса
-		(LPCSTR)"Plot2D Viewer",					// заголовок окна
+		(LPCSTR)"Simple 2D render",					// заголовок окна
 		WS_OVERLAPPEDWINDOW,						// стиль окна
 		200,200, WINW + 200, WINH + 200,			// координаты на экране левого верхнего угла окна, его ширина и высота
 		nullptr,nullptr,hInstance,nullptr);
+
+    // задаем модели из файла
+	scene.setModel(PROJECTPATH "model1_vert.txt", PROJECTPATH "model1_edg.txt");
 
 	ShowWindow(hWnd,nCmdShow);
 	UpdateWindow(hWnd);
@@ -52,11 +58,6 @@ int _stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	return 0;
 }
 
-// ¬ основном модуле объявляется только одна глобальная переменная - создаЄтся объект класса Scene2D
-// ¬се дальнейшие действия осуществляются посредством обращения к методам, реализованным в этом классе
-Scene2D scene(WINW/2, WINH/2, DEFSCALE, DEFSCALE + 50);
-int plotType = 1;
-
 LRESULT _stdcall WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// оконная процедура принимает и обрабатывает все сообщения, отправленные окну
 {
 	switch(msg)
@@ -65,18 +66,8 @@ LRESULT _stdcall WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// 
 		{
 			HDC dc = GetDC(hWnd);
 			scene.Clear(dc);				// вызов реализованного в классе Camera2D метода, отвечающего за очистку рабочей области окна hWnd
-			if (plotType)
-			{
-				scene.plot(dc, sinusoid, RED);
-				scene.plot(dc, parabola, BLUE);
-				scene.plot(dc, test, ORANGE);
-			}
-			else
-			{
-				scene.polarPlot(dc, polarCos, BLUE);
-				scene.polarPlot(dc, polarRose, ORANGE);
-				scene.polarPlot(dc, polarSpiral, RED);
-			}
+            scene.render(dc);
+
 			ReleaseDC(hWnd,dc);
 			return DefWindowProc(hWnd,msg,wParam,lParam);
 		}
@@ -89,20 +80,31 @@ LRESULT _stdcall WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// 
 			InvalidateRect(hWnd,nullptr,false);
 			return 0;
 		}
+		// TODO текущий номер модели
 		case WM_KEYDOWN:
 		{
-			switch (wParam)
+			switch (wParam) // перемещение модели
 			{
-				case 0x31: //1 key
+				case VK_RIGHT:
 				{
-					plotType = 1;
+					scene.model->apply(translation(0.5, 0));
 					break;
 				}
-				case 0x32: //2 key
-				{
-					plotType = 0;
-					break;
-				}
+                case VK_LEFT:
+                {
+                    scene.model->apply(translation(-0.5, 0));
+                    break;
+                }
+                case VK_UP:
+                {
+                    scene.model->apply(translation(0, 0.5));
+                    break;
+                }
+                case VK_DOWN:
+                {
+                    scene.model->apply(translation(0, -0.5));
+                    break;
+                }
 			}
 			InvalidateRect(hWnd, nullptr, false);
 			return 0;

@@ -23,7 +23,9 @@ class Matrix
 {
     // rows - строка
     // cols - столбец
-    int rows, cols; // матрица размера ROWxCOLUMN
+    int rows, cols;
+
+    // матрица размера ROWxCOLUMN
     Cell **cells;
 
     static mt19937 gen; // генератор случайных чисел
@@ -47,11 +49,12 @@ public:
     inline Cell& operator() (int i, int j) { return cells[i-1][j-1]; }             // получение элемента
     inline void operator() (int i, int j, Cell data) { cells[i-1][j-1] = data; }   // установка элемента
 
-    void randomFill(int left, int right); // заполнение случайными числами
+    int getRows() const;
+    int getCols() const;
+
     Matrix<Cell> transpose();   // вернет транспонированную матрицу
     double transposeConst();    // транспонирование матрицы
     double norm();              // норма вектора (sum sqrt(x[i]*x[i]))
-    void sigInvert();           // инвертирование знака у всех элементов
 
     operator double();                      // функция приведения к типу double
     Matrix& operator = (const Matrix&);		// Перегрузка оператора присваивания
@@ -310,15 +313,6 @@ double Matrix<Cell>::randomDouble(int left, int right)
     return temp;
 }
 
-// заполнение матрицы случайными числами
-template<typename Cell>
-void Matrix<Cell>::randomFill(int left, int right)
-{
-    for (int i = 0; i < rows; ++i)
-        for (int j = 0; j < cols; ++j)
-            cells[i][j] = randomDouble(left, right);
-}
-
 template<typename Cell>
 inline Cell &Matrix<Cell>::operator()(int i){
     return (rows == 1) ? cells[1][i-1] : cells[i-1][1];
@@ -330,10 +324,13 @@ Matrix<Cell>::operator double() {
 }
 
 template<typename Cell>
-void Matrix<Cell>::sigInvert() {
-    for (int i=0; i < rows; i++)
-        for (int j = 0; j < cols; j++)
-            cells[i][j] = -cells[i][j];
+int Matrix<Cell>::getRows() const {
+    return rows;
+}
+
+template<typename Cell>
+int Matrix<Cell>::getCols() const {
+    return cols;
 }
 
 #endif // MATRIX_H

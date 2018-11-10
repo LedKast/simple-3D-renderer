@@ -81,8 +81,8 @@ Model2D::Model2D(string vert, string edg) // конструктор задани
     initVertices = vertices = matrixFromFile<>(vert);
     edges = matrixFromFile<int>(edg);
 
-    cout << "VERTICES: \n" << vertices; // DEBUG
-    cout << "EDGES: \n" << edges; // DEBUG
+//    cout << "VERTICES: \n" << vertices; // DEBUG
+//    cout << "EDGES: \n" << edges; // DEBUG
 }
 
 void Model2D::apply(Matrix<> AT) {
