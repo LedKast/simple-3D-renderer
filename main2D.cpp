@@ -42,7 +42,8 @@ int _stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		nullptr,nullptr,hInstance,nullptr);
 
     // задаем модели из файла
-	scene.setModel(PROJECTPATH "model1_vert.txt", PROJECTPATH "model1_edg.txt");
+    scene.addModel(PROJECTPATH "model1_vert.txt", PROJECTPATH "model1_edg.txt");
+    scene.addModel(PROJECTPATH "model1_vert.txt", PROJECTPATH "model1_edg.txt");
 
 	ShowWindow(hWnd,nCmdShow);
 	UpdateWindow(hWnd);
@@ -80,31 +81,33 @@ LRESULT _stdcall WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// 
 			InvalidateRect(hWnd,nullptr,false);
 			return 0;
 		}
-		// TODO текущий номер модели
 		case WM_KEYDOWN:
 		{
 			switch (wParam) // перемещение модели
 			{
 				case VK_RIGHT:
-				{
-					scene.model->apply(translation(0.5, 0));
+					scene.getModel().apply(translation(0.5, 0));
 					break;
-				}
+
                 case VK_LEFT:
-                {
-                    scene.model->apply(translation(-0.5, 0));
+                    scene.getModel().apply(translation(-0.5, 0));
                     break;
-                }
+
                 case VK_UP:
-                {
-                    scene.model->apply(translation(0, 0.5));
+                    scene.getModel().apply(translation(0, 0.5));
                     break;
-                }
+
                 case VK_DOWN:
-                {
-                    scene.model->apply(translation(0, -0.5));
+                    scene.getModel().apply(translation(0, -0.5));
                     break;
-                }
+
+				case 0x31:
+					scene.selectPrevModel();
+					break;
+
+				case 0x32:
+					scene.selectNextModel();
+					break;
 			}
 			InvalidateRect(hWnd, nullptr, false);
 			return 0;
