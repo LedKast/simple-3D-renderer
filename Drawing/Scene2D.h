@@ -64,6 +64,22 @@ public:
             temp[i] = model[i];
 
         temp[modelcount - 1] = Model2D(vert, edg); // добавляем новую модель
+        //delete model;
+        model = temp;
+    }
+    void removeLastModel() // удалить последнюю модель
+    {
+        if (modelcount <= 1 || currmodel == modelcount - 1)
+            return;
+
+        modelcount--;
+        Model2D *temp = new Model2D[modelcount];
+        for (int i = 0; i < modelcount; ++i) // переопределение массива с моделями
+            temp[i] = model[i];
+
+        // TODO подумать как аккуртно удалить последнюю модель без последствий
+        // возможно вызывать деструктор конкретной модели
+        //delete model;
         model = temp;
     }
     void selectModel(int i) // выбрать модель по номеру

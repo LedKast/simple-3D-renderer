@@ -43,7 +43,6 @@ int _stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
     // задаем модели из файла
     scene.addModel(PROJECTPATH "model1_vert.txt", PROJECTPATH "model1_edg.txt");
-    scene.addModel(PROJECTPATH "model1_vert.txt", PROJECTPATH "model1_edg.txt");
 
 	ShowWindow(hWnd,nCmdShow);
 	UpdateWindow(hWnd);
@@ -102,11 +101,17 @@ LRESULT _stdcall WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// 
                     break;
 
 				case 0x31:
-					scene.selectPrevModel();
+					scene.selectPrevModel(); // выбор предыдущей модели
 					break;
 
 				case 0x32:
-					scene.selectNextModel();
+					scene.selectNextModel(); // выбор следующей
+					break;
+				case VK_OEM_PLUS: // можно задать любую модель по кнопке +
+					scene.addModel(PROJECTPATH "model1_vert.txt", PROJECTPATH "model1_edg.txt");
+					break;
+				case VK_OEM_MINUS: // удаление последней модели
+					scene.removeLastModel();
 					break;
 			}
 			InvalidateRect(hWnd, nullptr, false);
@@ -140,10 +145,7 @@ LRESULT _stdcall WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// 
 
 			int x = GET_X_LPARAM(lParam);
 			int y = GET_Y_LPARAM(lParam);
-			if (GET_WHEEL_DELTA_WPARAM(wParam) > 0) //UP
-				scene.scale(pt.x, pt.y, true);
-			else //DOWN
-				scene.scale(pt.x, pt.y, false);
+			scene.scale(pt.x, pt.y, GET_WHEEL_DELTA_WPARAM(wParam) > 0);
 
 			InvalidateRect(hWnd, nullptr, false);
 			return 0;

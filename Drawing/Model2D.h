@@ -34,6 +34,7 @@ public:
     Model2D(const Matrix<> vert, const Matrix<int> edg) : vertices(vert), edges(edg), initVertices(), cumulativeAT(identity())
     {initVertices = vert;}
     Model2D(string vert, string edg);
+    ~Model2D() = default;
 
     // получение координат X,Y вершины под номером i
     double getVertexX(int i) { return vertices(1, i); }
