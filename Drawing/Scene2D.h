@@ -14,7 +14,6 @@ class Scene2D : public Camera2D
     int currmodel;
     Model2D *model;
 public:
-    // TODO массив моделей. отрисовывать в цикле. переопределять массив с моделями. устанавливать текущую модель selectModel()
 
 	Scene2D(double X0, double Y0, double px, double py) : Camera2D(X0, Y0, px, py)
 	{
@@ -46,7 +45,7 @@ public:
 
     }
 
-    void addModel(Matrix<> &vert, Matrix<int> &edg) // добавить модель из матрицы
+    void addModel(Matrix<> &vert, Matrix<bool> &edg) // добавить модель из матрицы
     {
 	    modelcount++;
         Model2D *temp = new Model2D[modelcount];

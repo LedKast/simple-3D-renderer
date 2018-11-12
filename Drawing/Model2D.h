@@ -24,14 +24,14 @@ class Model2D
     Matrix<> cumulativeAT;  // накопленное аффинное преобразование
     Matrix<> initVertices;  // исходные вершины
 
-    Matrix<int> edges;      // ребра
+    Matrix<bool> edges;      // ребра
 
     template <typename T = double>
     Matrix<T> matrixFromFile(string file);
 
 public:
     Model2D() : vertices(), edges(), initVertices(), cumulativeAT(identity()) {}
-    Model2D(const Matrix<> vert, const Matrix<int> edg) : vertices(vert), edges(edg), initVertices(), cumulativeAT(identity())
+    Model2D(const Matrix<> vert, const Matrix<bool> edg) : vertices(vert), edges(edg), initVertices(), cumulativeAT(identity())
     {initVertices = vert;}
     Model2D(string vert, string edg);
     ~Model2D() = default;
@@ -40,7 +40,7 @@ public:
     double getVertexX(int i) { return vertices(1, i); }
     double getVertexY(int i) { return vertices(2, i); }
     Matrix<> getVertices() { return vertices; }
-    Matrix<int> getEdges() { return edges; }
+    Matrix<bool> getEdges() { return edges; }
 
     void apply(Matrix<> AT);
 };
@@ -80,7 +80,7 @@ Model2D::Model2D(string vert, string edg) // конструктор задани
 {
     cumulativeAT = identity();
     initVertices = vertices = matrixFromFile<>(vert);
-    edges = matrixFromFile<int>(edg);
+    edges = matrixFromFile<bool>(edg);
 
 //    cout << "VERTICES: \n" << vertices; // DEBUG
 //    cout << "EDGES: \n" << edges; // DEBUG

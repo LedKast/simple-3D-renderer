@@ -16,7 +16,7 @@ add_executable(Lab_2_2D_scene
         Drawing/Scene2D.h
         Math/AffineTransform.h
         Math/Matrix.h
-        Data.h
+        #Data.h
 )
 
 

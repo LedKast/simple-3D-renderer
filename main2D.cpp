@@ -11,6 +11,10 @@
 #include "Math/Matrix.h"
 #include "Math/AffineTransform.h"
 
+#define TRNSPEED 0.75 	// скорость переноса
+#define SCLSPEED 0.5  	// скорость масштабирования
+#define RTSPEED 0.5  	// скорость вращения
+
 #define PROJECTPATH "d:/DOCs/3_course/CGraphics/Lab_2_2D_Scene/"
 #define WINW 480
 #define WINH 320
@@ -85,19 +89,19 @@ LRESULT _stdcall WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// 
 			switch (wParam) // перемещение модели
 			{
 				case VK_RIGHT:
-					scene.getModel().apply(translation(0.5, 0));
+					scene.getModel().apply(translation(TRNSPEED, 0));
 					break;
 
                 case VK_LEFT:
-                    scene.getModel().apply(translation(-0.5, 0));
+                    scene.getModel().apply(translation(-TRNSPEED, 0));
                     break;
 
                 case VK_UP:
-                    scene.getModel().apply(translation(0, 0.5));
+                    scene.getModel().apply(translation(0, TRNSPEED));
                     break;
 
                 case VK_DOWN:
-                    scene.getModel().apply(translation(0, -0.5));
+                    scene.getModel().apply(translation(0, -TRNSPEED));
                     break;
 
 				case 0x31:
@@ -107,11 +111,33 @@ LRESULT _stdcall WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// 
 				case 0x32:
 					scene.selectNextModel(); // выбор следующей
 					break;
-				case VK_OEM_PLUS: // можно задать любую модель по кнопке +
+
+					// A
+				case 0x41: // можно задать любую модель. Кнопка "A"
 					scene.addModel(PROJECTPATH "model1_vert.txt", PROJECTPATH "model1_edg.txt");
 					break;
-				case VK_OEM_MINUS: // удаление последней модели
+
+					// D
+				case 0x44: // удаление последней модели. Кнопка "D"
 					scene.removeLastModel();
+					break;
+
+					// W
+				case 0x57: // поворот против часовой
+					scene.getModel().apply(rotation(RTSPEED));
+					break;
+
+					// S
+				case 0x53: // поворот по часовой
+					scene.getModel().apply(rotation(-RTSPEED));
+					break;
+
+				case VK_OEM_PLUS: // изменение размера модели
+					scene.getModel().apply(scaling(1 + SCLSPEED, 1 + SCLSPEED));
+					break;
+
+				case VK_OEM_MINUS: // изменение размера модели
+					scene.getModel().apply(scaling(1 - SCLSPEED, 1 - SCLSPEED));
 					break;
 			}
 			InvalidateRect(hWnd, nullptr, false);
