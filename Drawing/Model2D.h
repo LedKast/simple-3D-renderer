@@ -17,7 +17,7 @@
  * */
 
 // Вариант #6
-
+// предполагается, что последняя точка в модели это центр фигуры
 class Model2D
 {
     Matrix<> vertices;      // вершины
@@ -31,8 +31,7 @@ class Model2D
 
 public:
     Model2D() : vertices(), edges(), initVertices(), cumulativeAT(identity()) {}
-    Model2D(const Matrix<> vert, const Matrix<bool> edg) : vertices(vert), edges(edg), initVertices(), cumulativeAT(identity())
-    {initVertices = vert;}
+    Model2D(Matrix<> vert, const Matrix<bool> edg);
     Model2D(string vert, string edg);
     ~Model2D() = default;
 
@@ -41,6 +40,12 @@ public:
     double getVertexY(int i) { return vertices(2, i); }
     Matrix<> getVertices() { return vertices; }
     Matrix<bool> getEdges() { return edges; }
+
+    double getPosX() { return vertices(1, vertices.getCols()); }
+    double getPosY() { return vertices(2, vertices.getCols()); }
+
+    double getOVecX() { return vertices(1, 1) - vertices(1, vertices.getCols()); }
+    double getOVecY() { return vertices(2, 1) - vertices(2, vertices.getCols()); }
 
     void apply(Matrix<> AT);
 };
@@ -76,10 +81,31 @@ Matrix<T> Model2D::matrixFromFile(string file) {
     return mtemp;
 }
 
+Model2D::Model2D(Matrix<> vert, const Matrix<bool> edg) : edges(edg), initVertices(), cumulativeAT(identity())
+{
+    // перемещаем центр фигуры в начало координат
+    vertices = vert;
+    initVertices = vertices =
+            translation(
+                    -vertices(1, vertices.getCols()),
+                    -vertices(2, vertices.getCols())
+            ) *
+            vertices;
+}
+
 Model2D::Model2D(string vert, string edg) // конструктор задания данных из файла
 {
     cumulativeAT = identity();
-    initVertices = vertices = matrixFromFile<>(vert);
+    vertices = matrixFromFile<>(vert);
+
+    // перемещаем центр фигуры в начало координат
+    initVertices = vertices =
+            translation(
+                    -vertices(1, vertices.getCols()),
+                    -vertices(2, vertices.getCols())
+            ) *
+            vertices;
+
     edges = matrixFromFile<bool>(edg);
 
 //    cout << "VERTICES: \n" << vertices; // DEBUG

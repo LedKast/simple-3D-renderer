@@ -6,7 +6,7 @@
 
 #define RED RGB(215, 0, 0)
 #define BLUE RGB(0, 215, 215)
-#define ORANGE RGB(255, 200, 0)
+#define ORANGE RGB(255, 150, 0)
 #define GREEN RGB(0, 215, 72)
 #define GRAY RGB(180, 180, 180)
 

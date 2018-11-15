@@ -1,6 +1,7 @@
 ﻿// aka 2DPlotViewer
 #include <windows.h>
 #include <windowsx.h>
+#include <math.h>
 
 
 #include "Data.h"
@@ -12,14 +13,17 @@
 #include "Math/AffineTransform.h"
 
 #define TRNSPEED 0.75 	// скорость переноса
-#define SCLSPEED 0.5  	// скорость масштабирования
-#define RTSPEED 0.5  	// скорость вращения
+#define SCLSPEED 0.2  	// скорость масштабирования
+#define RTSPEED 3.14/24  	// скорость вращения
 
 #define PROJECTPATH "d:/DOCs/3_course/CGraphics/Lab_2_2D_Scene/"
 #define WINW 480
 #define WINH 320
 
 Scene2D scene(WINW/2, WINH/2, DEFSCALE, DEFSCALE + 50);
+
+void relativeRotation(double);
+void relativeScaling(double, double);
 
 LRESULT _stdcall WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);						// прототип оконной процедуры
 int _stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)		// основнаRя процедура
@@ -86,6 +90,7 @@ LRESULT _stdcall WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// 
 		}
 		case WM_KEYDOWN:
 		{
+
 			switch (wParam) // перемещение модели
 			{
 				case VK_RIGHT:
@@ -121,23 +126,29 @@ LRESULT _stdcall WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// 
 				case 0x44: // удаление последней модели. Кнопка "D"
 					scene.removeLastModel();
 					break;
-
+				/*
+				 * Вращение вокруг центра фигуры
+				 * Задавать центр из файла
+				 */
 					// W
 				case 0x57: // поворот против часовой
-					scene.getModel().apply(rotation(RTSPEED));
-					break;
 
+					relativeRotation(RTSPEED);
+					break;
 					// S
 				case 0x53: // поворот по часовой
-					scene.getModel().apply(rotation(-RTSPEED));
+
+					relativeRotation(-RTSPEED);
 					break;
 
 				case VK_OEM_PLUS: // изменение размера модели
-					scene.getModel().apply(scaling(1 + SCLSPEED, 1 + SCLSPEED));
+					relativeScaling(1,1 + SCLSPEED);
+					//scene.getModel().apply(scaling(1 + SCLSPEED, 1 + SCLSPEED));
 					break;
 
 				case VK_OEM_MINUS: // изменение размера модели
-					scene.getModel().apply(scaling(1 - SCLSPEED, 1 - SCLSPEED));
+					relativeScaling(1,1 - SCLSPEED);
+					//scene.getModel().apply(scaling(1 - SCLSPEED, 1 - SCLSPEED));
 					break;
 			}
 			InvalidateRect(hWnd, nullptr, false);
@@ -189,4 +200,33 @@ LRESULT _stdcall WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// 
 		}
 	}
 	return 0;
+}
+
+void relativeRotation(double angle)
+{
+	double currPosX = scene.getModel().getPosX();
+	double currPosY = scene.getModel().getPosY();
+	// составное аффинное преобразование
+	// перемещаем в (0,0), делаем поворот, и возвращаем назад
+	scene.getModel().apply(
+			translation(
+					currPosX,
+					currPosY) *
+			rotation(angle) *
+			translation(
+					-currPosX,
+					-currPosY)
+	);
+}
+
+void relativeScaling(double x, double y)
+{
+	double currOVecX = scene.getModel().getOVecY();
+	double currOVecY = scene.getModel().getOVecX();
+
+	scene.getModel().apply(
+			rotation(currOVecX, -currOVecY) *
+			scaling(x, y) *
+			rotation(currOVecX, currOVecY)
+	);
 }
