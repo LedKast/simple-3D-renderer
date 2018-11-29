@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(Lab_2_2D_scene)
+project(Lab_3_3D_scene)
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -8,15 +8,14 @@ set_property(TARGET gdi32 PROPERTY IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/lib/g
 add_dependencies(gdi32 project_gdi32)
 
 
-add_executable(Lab_2_2D_scene
-        #main.cpp
-        main2D.cpp
+add_executable(Lab_3_3D_scene
+        main.cpp
         Drawing/Camera2D.h
         Drawing/Model2D.h
         Drawing/Scene2D.h
         Math/AffineTransform.h
         Math/Matrix.h
-        #Data.h
+        Data.h
 )
 
 
