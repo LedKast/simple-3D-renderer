@@ -202,31 +202,31 @@ LRESULT _stdcall WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// 
 	return 0;
 }
 
-void relativeRotation(double angle)
-{
-	double currPosX = scene.getModel().getPosX();
-	double currPosY = scene.getModel().getPosY();
-	// составное аффинное преобразование
-	// перемещаем в (0,0), делаем поворот, и возвращаем назад
-	scene.getModel().apply(
-			translation(
-					currPosX,
-					currPosY) *
-			rotation(angle) *
-			translation(
-					-currPosX,
-					-currPosY)
-	);
-}
-
-void relativeScaling(double x, double y)
-{
-	double currOVecX = scene.getModel().getOVecY();
-	double currOVecY = scene.getModel().getOVecX();
-
-	scene.getModel().apply(
-			rotation(currOVecX, -currOVecY) *
-			scaling(x, y) *
-			rotation(currOVecX, currOVecY)
-	);
-}
+//void relativeRotation(double angle)
+//{
+//	double currPosX = scene.getModel().getPosX();
+//	double currPosY = scene.getModel().getPosY();
+//	// составное аффинное преобразование
+//	// перемещаем в (0,0), делаем поворот, и возвращаем назад
+//	scene.getModel().apply(
+//			translation(
+//					currPosX,
+//					currPosY) *
+//			rotation(angle) *
+//			translation(
+//					-currPosX,
+//					-currPosY)
+//	);
+//}
+//
+//void relativeScaling(double x, double y)
+//{
+//	double currOVecX = scene.getModel().getOVecY();
+//	double currOVecY = scene.getModel().getOVecX();
+//
+//	scene.getModel().apply(
+//			rotation(currOVecX, -currOVecY) *
+//			scaling(x, y) *
+//			rotation(currOVecX, currOVecY)
+//	);
+//}

@@ -26,6 +26,7 @@ class Model2D
 
     Matrix<bool> edges;      // ребра
 
+protected:
     template <typename T = double>
     Matrix<T> matrixFromFile(string file);
 
@@ -47,7 +48,7 @@ public:
     double getOVecX() { return vertices(1, 1) - vertices(1, vertices.getCols()); }
     double getOVecY() { return vertices(2, 1) - vertices(2, vertices.getCols()); }
 
-    void apply(Matrix<> AT);
+    virtual void apply(Matrix<> AT);
 };
 
 template<typename T>
