@@ -3,20 +3,19 @@
 #include <windowsx.h>
 #include <math.h>
 
-
-#include "Data.h"
-
 #include "Drawing/Scene2D.h"
 #include "Drawing/Model2D.h"
+#include "Drawing/Model3D.h"
 
 #include "Math/Matrix.h"
 #include "Math/AffineTransform.h"
 
 #define TRNSPEED 0.75 	// скорость переноса
 #define SCLSPEED 0.2  	// скорость масштабирования
-#define RTSPEED 3.14/24  	// скорость вращения
+#define RTSPEED 3.14/24 // скорость вращения
 
-#define PROJECTPATH "d:/DOCs/3_course/CGraphics/Lab_2_2D_Scene/"
+#define PROJECTPATH "d:/DOCs/3_course/CGraphics/CG_3D_Scene/"
+#define DEFSCALE 50 	//стандартный масштаб сцены
 #define WINW 480
 #define WINH 320
 
@@ -25,8 +24,8 @@ Scene2D scene(WINW/2, WINH/2, DEFSCALE, DEFSCALE + 50);
 void relativeRotation(double);
 void relativeScaling(double, double);
 
-LRESULT _stdcall WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);						// прототип оконной процедуры
-int _stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)		// основнаRя процедура
+LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);						// прототип оконной процедуры
+int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)		// основнаRя процедура
 {
 	// ѕервая составляющая часть основной процедуры - создание окна: сначала описывается оконный класс wc, затем создаЄтся окно hWnd
 	WNDCLASS wc;
@@ -50,6 +49,7 @@ int _stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		nullptr,nullptr,hInstance,nullptr);
 
     // задаем модели из файла
+    Model3D md(PROJECTPATH "models/3Dmodel1_vert", PROJECTPATH "models/3Dmodel1_faces", PROJECTPATH "models/3Dmodel1_im"); // TODO debug
     scene.addModel(PROJECTPATH "model1_vert.txt", PROJECTPATH "model1_edg.txt");
 
 	ShowWindow(hWnd,nCmdShow);
@@ -66,7 +66,7 @@ int _stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	return 0;
 }
 
-LRESULT _stdcall WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// оконная процедура принимает и обрабатывает все сообщения, отправленные окну
+LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// оконная процедура принимает и обрабатывает все сообщения, отправленные окну
 {
 	switch(msg)
 	{
@@ -202,31 +202,33 @@ LRESULT _stdcall WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// 
 	return 0;
 }
 
-//void relativeRotation(double angle)
-//{
-//	double currPosX = scene.getModel().getPosX();
-//	double currPosY = scene.getModel().getPosY();
-//	// составное аффинное преобразование
-//	// перемещаем в (0,0), делаем поворот, и возвращаем назад
-//	scene.getModel().apply(
-//			translation(
-//					currPosX,
-//					currPosY) *
-//			rotation(angle) *
-//			translation(
-//					-currPosX,
-//					-currPosY)
-//	);
-//}
-//
-//void relativeScaling(double x, double y)
-//{
-//	double currOVecX = scene.getModel().getOVecY();
-//	double currOVecY = scene.getModel().getOVecX();
-//
-//	scene.getModel().apply(
-//			rotation(currOVecX, -currOVecY) *
-//			scaling(x, y) *
-//			rotation(currOVecX, currOVecY)
-//	);
-//}
+
+
+void relativeRotation(double angle)
+{
+	double currPosX = scene.getModel().getPosX();
+	double currPosY = scene.getModel().getPosY();
+	// составное аффинное преобразование
+	// перемещаем в (0,0), делаем поворот, и возвращаем назад
+	scene.getModel().apply(
+			translation(
+					currPosX,
+					currPosY) *
+			rotation(angle) *
+			translation(
+					-currPosX,
+					-currPosY)
+	);
+}
+
+void relativeScaling(double x, double y)
+{
+	double currOVecX = scene.getModel().getOVecY();
+	double currOVecY = scene.getModel().getOVecX();
+
+	scene.getModel().apply(
+			rotation(currOVecX, -currOVecY) *
+			scaling(x, y) *
+			rotation(currOVecX, currOVecY)
+	);
+}

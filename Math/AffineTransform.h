@@ -4,7 +4,7 @@
 #include <math.h>
 #include "Matrix.h"
 
-enum reftype{MAPX, MAPY, MAP00}; // типы отражений
+enum reftype{MAPX, MAPY, MAP00, MAPZ, MAP000}; // типы отражений
 
 // Перенос на вектор
 Matrix<> translation(double x, double y)
@@ -14,6 +14,15 @@ Matrix<> translation(double x, double y)
 		0, 1, y,
 		0, 0, 1};
 	return Matrix<>(3, T);
+}
+Matrix<> translation3D(double x, double y, double z)
+{
+	double T[] = {
+            1.0, 0.0, 0.0, x,
+            0.0, 1.0, 0.0, y,
+            0.0, 0.0, 1.0, z,
+            0.0, 0.0, 0.0, 1.0};
+	return Matrix<>(4, T);
 }
 
 // identity() - тождественное АП;
@@ -25,6 +34,15 @@ Matrix<> identity()
             0, 0, 1};
     return Matrix<>(3, T);
 }
+Matrix<> identity3D()
+{
+    double T[] = {
+            1.0, 0.0, 0.0, 0.0,
+            0.0, 1.0, 0.0, 0.0,
+            0.0, 0.0, 1.0, 0.0,
+            0.0, 0.0, 0.0, 1.0};
+    return Matrix<>(4, T);
+}
 
 // rotation(t) - поворот на угол t;
 Matrix<> rotation(double t)
@@ -34,6 +52,30 @@ Matrix<> rotation(double t)
             sin(t), cos(t), 0,
             0, 0, 1};
     return Matrix<>(3, T);
+}
+Matrix<> rotationX(double t){// Rotation(t) - поворот на угол t;
+    double T[] = {
+            1.0, 0.0, 0.0, 0.0,
+            0.0, cos(t), -sin(t), 0.0,
+            0.0, sin(t), cos(t), 0.0,
+            0.0, 0.0, 0.0, 1.0};
+    return Matrix<>(4, T);
+}
+Matrix<> rotationY(double t){// Rotation(t) - поворот на угол t;
+    double T[] = {
+            cos(t), 0.0, sin(t), 0.0,
+            0.0, 1.0, 0.0, 0.0,
+            -sin(t), 0.0, cos(t), 0.0,
+            0.0, 0.0, 0.0, 1.0};
+    return Matrix<>(4, T);
+}
+Matrix<> rotationZ(double t){// Rotation(t) - поворот на угол t;
+    double T[] = {
+            cos(t), -sin(t), 0.0, 0.0,
+            sin(t), cos(t), 0.0, 0.0,
+            0.0, 0.0, 1.0, 0.0,
+            0.0, 0.0, 0.0, 1.0};
+    return Matrix<>(4, T);
 }
 
 // rotation(c, s) - поворот на угол, косинус и синус которого пропорциональны величинам c и s;
@@ -46,6 +88,36 @@ Matrix<> rotation(double c, double s)
             0, 0, 1};
     return Matrix<>(3, T);
 }
+Matrix<> rotationX(double c, double s)
+{
+    double d = 1.0/sqrt(c*c+s*s);
+    double T[16] = {
+            1, 0, 0, 0,
+            0, c*d, -s*d, 0,
+            0, s*d, c*d, 0,
+            0, 0, 0, 1};
+    return Matrix<>(4, T);
+}
+Matrix<> rotationY(double c, double s)
+{
+    double d = 1.0/sqrt(c*c+s*s);
+    double T[16] = {
+            c*d, 0, s*d, 0,
+            0, 1, 0, 0,
+            -s*d, 0, c*d, 0,
+            0, 0, 0, 1};
+    return Matrix<>(4, T);
+}
+Matrix<> rotationZ(double c, double s)
+{
+    double d = 1.0/sqrt(c*c+s*s);
+    double T[16] = {
+            c*d, -s*d, 0, 0,
+            s*d, c*d, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1};
+    return Matrix<>(4, T);
+}
 
 // scaling(kx, ky) - масштабирование;
 Matrix<> scaling(double kx, double ky)
@@ -56,6 +128,16 @@ Matrix<> scaling(double kx, double ky)
             0, 0, 1};
     return Matrix<>(3, T);
 }
+Matrix<> scaling(double kx, double ky, double kz)
+{
+    double T[16] = {
+            kx, 0, 0, 0,
+            0, ky, 0, 0,
+            0, 0, kz, 0,
+            0, 0, 0, 1};
+    return Matrix<>(4, T);
+}
+
 
 // mapping (различные виды отражений) - по желанию, для создания матриц отражения можно использовать функцию Scaling.
 Matrix<> mapping(reftype type)
@@ -78,6 +160,31 @@ Matrix<> mapping(reftype type)
     }
 
     return Matrix<>(3, T);
+}
+Matrix<> mapping3D(reftype type) // TODO mapping3D
+{
+    double T[16]= {
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1};
+    switch (type)
+    {
+        case MAPX:
+            T[5] = -1;
+            break;
+        case MAPY:
+            T[0] = -1;
+            break;
+        case MAPZ:
+            T[10] = -1;
+            break;
+        case MAP000:
+            T[10] = T[0] = T[5] = -1;
+            break;
+    }
+
+    return Matrix<>(4, T);
 }
 
 #endif // AFFINE_TRANSFORM_H

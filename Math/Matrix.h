@@ -16,6 +16,8 @@ istream& operator>> (istream& fi, Matrix<Cell>& M);
 template <typename Cell>
 ostream& operator<< (ostream& fo, const Matrix<Cell>& M);
 
+typedef Matrix<> vec3D; // размерности 1xN
+
 // Индексация с 1
 // Класс для работы с квадратными и прямоугольными матрицами
 template <typename Cell>
@@ -52,9 +54,13 @@ public:
     int getRows() const;
     int getCols() const;
 
-    Matrix<Cell> transpose();   // вернет транспонированную матрицу
-    double transposeConst();    // транспонирование матрицы
-    double norm();              // норма вектора (sum sqrt(x[i]*x[i]))
+    // TODO векторные функции
+    double scalarprod(Matrix<Cell>);    // скалярное произведение
+    Matrix<Cell> vecprod(Matrix<Cell>); // векторное произведение
+
+    Matrix<Cell> getTranspose();    // вернет транспонированную матрицу
+    double transpose();             // транспонирование матрицы
+    double norm();                  // норма вектора (sum sqrt(x[i]*x[i]))
 
     operator double();                      // функция приведения к типу double
     Matrix& operator = (const Matrix&);		// Перегрузка оператора присваивания
@@ -237,7 +243,7 @@ void Matrix<Cell>::FreeCells()
 
 // транспонированная матрица
 template<typename Cell>
-Matrix<Cell> Matrix<Cell>::transpose()
+Matrix<Cell> Matrix<Cell>::getTranspose()
 {
     // выделяем память для новой матрицы
     Matrix<Cell> trans(cols, rows);
@@ -251,9 +257,9 @@ Matrix<Cell> Matrix<Cell>::transpose()
 }
 
 template<typename Cell>
-double Matrix<Cell>::transposeConst()
+double Matrix<Cell>::transpose()
 {
-    cells = (this->transpose()).cells;
+    cells = (this->getTranspose()).cells;
 
     int temp = rows;
     rows = cols;
@@ -331,6 +337,26 @@ int Matrix<Cell>::getRows() const {
 template<typename Cell>
 int Matrix<Cell>::getCols() const {
     return cols;
+}
+
+template<typename Cell>
+double Matrix<Cell>::scalarprod(Matrix<Cell> right) {
+    double sprod = 0;
+    if (this->cols == right.cols && this->rows == right.rows && right.rows == 1) // если это одинаковые по размеру векторы
+        for (int i = 0; i < right.cols; ++i)
+            sprod += this->cells[0][i]*right.cells[0][i];
+    return sprod;
+}
+
+template<typename Cell>
+Matrix<Cell> Matrix<Cell>::vecprod(Matrix<Cell> right) {
+    Matrix<Cell> temp;
+    if (this->cols == right.cols && this->rows == right.rows && right.rows == 1) // если это одинаковые по размеру векторы
+    {
+
+    }
+
+    return temp;
 }
 
 #endif // MATRIX_H

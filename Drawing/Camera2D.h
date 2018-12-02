@@ -49,6 +49,8 @@ protected:
 public:
 	bool isDragging;
 
+	Camera2D() = default;
+
 	Camera2D(double X0, double Y0, double px, double py) : X0(X0), Y0(Y0), px(px), py(py)
 	{
 		W = H = 0;
