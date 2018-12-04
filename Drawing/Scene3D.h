@@ -1,27 +1,25 @@
-﻿#ifndef SCENE_2D_H
-#define SCENE_2D_H
+#ifndef LAB_3_3D_SCENE_SCENE3D_H
+#define LAB_3_3D_SCENE_SCENE3D_H
 
-#define _USE_MATH_DEFINES
-#include <math.h>
-#include <string>
+#include "Camera3D.h"
+#include "Model3D.h"
 
-#include "Camera2D.h"
-#include "Model2D.h"
 
-class Scene2D : public Camera2D
+class Scene3D : public Camera3D
 {
+    Model3D *model;
     int modelcount;
     int currmodel;
-    Model2D *model;
 public:
 
-	Scene2D(double X0, double Y0, double px, double py) : Camera2D(X0, Y0, px, py)
-	{
-	    model = nullptr;
+    Scene3D(double X0, double Y0, double px, double py) : Camera3D(X0, Y0, px, py)
+    {
+        model = nullptr;
         modelcount = currmodel = 0;
-	}
+        // model->project(); //TODO init project
+    }
 
-	void render(HDC dc)
+    void render(HDC dc) // TODO change render
     {
         HPEN pen;
 
@@ -45,24 +43,29 @@ public:
 
     }
 
-    void addModel(Matrix<> &vert, Matrix<bool> &edg) // добавить модель из матрицы
+    void apply() // вызывает apply и project у текущей модели
     {
-	    modelcount++;
-        Model2D *temp = new Model2D[modelcount];
-        for (int i = 0; i < modelcount - 1; ++i) // переопределение массива с моделями
-            temp[i] = model[i];
-
-        temp[modelcount - 1] = Model2D(vert, edg); // добавляем новую модель
-        model = temp;
+        // TODO scene apply
     }
-    void addModel(string vert, string edg) // добавить модель из файла
+
+    void addModel(Matrix<> &v, const Matrix<int> &f, const Matrix<int> &im) // добавить модель из матрицы
     {
         modelcount++;
-        Model2D *temp = new Model2D[modelcount];
+        auto *temp = new Model3D[modelcount];
         for (int i = 0; i < modelcount - 1; ++i) // переопределение массива с моделями
             temp[i] = model[i];
 
-        temp[modelcount - 1] = Model2D(vert, edg); // добавляем новую модель
+        temp[modelcount - 1] = Model3D(v, f, im); // добавляем новую модель
+        model = temp;
+    }
+    void addModel(string v, string f, string im) // добавить модель из файла
+    {
+        modelcount++;
+        auto *temp = new Model3D[modelcount];
+        for (int i = 0; i < modelcount - 1; ++i) // переопределение массива с моделями
+            temp[i] = model[i];
+
+        temp[modelcount - 1] = Model3D(v, f, im); // добавляем новую модель
         //delete model;
         model = temp;
     }
@@ -72,7 +75,7 @@ public:
             return;
 
         modelcount--;
-        Model2D *temp = new Model2D[modelcount];
+        auto temp = new Model3D[modelcount];
         for (int i = 0; i < modelcount; ++i) // переопределение массива с моделями
             temp[i] = model[i];
 
@@ -102,10 +105,11 @@ public:
             currmodel = modelcount - 1;
     }
 
-    Model2D &getModel()
+    Model3D &getModel()
     {
-	    return model[currmodel];
+        return model[currmodel];
     }
 };
 
-#endif // SCENE_2D_H
+
+#endif //LAB_3_3D_SCENE_SCENE3D_H

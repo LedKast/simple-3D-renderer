@@ -44,8 +44,8 @@ public:
         faces = matrixFromFile<int>(f);
         imEdges = matrixFromFile<int>(im);
         setEdges();
-        cout << edges; // TODO debug
-        cout << endl;
+//        cout << edges; // TODO debug
+//        cout << endl;
     }
 
     Matrix<int> getFaces() { return faces; }

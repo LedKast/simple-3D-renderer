@@ -4,7 +4,7 @@
 #include <math.h>
 #include "Matrix.h"
 
-enum reftype{MAPX, MAPY, MAP00, MAPZ, MAP000}; // типы отражений
+enum reftype{MAPX, MAPY, MAP00, MAPZ, MAPYZ, MAPZX, MAPXY, MAP000}; // типы отражений
 
 // Перенос на вектор
 Matrix<> translation(double x, double y)
@@ -53,7 +53,9 @@ Matrix<> rotation(double t)
             0, 0, 1};
     return Matrix<>(3, T);
 }
-Matrix<> rotationX(double t){// Rotation(t) - поворот на угол t;
+// повороты для 3D
+Matrix<> rotationX(double t)
+{
     double T[] = {
             1.0, 0.0, 0.0, 0.0,
             0.0, cos(t), -sin(t), 0.0,
@@ -61,7 +63,8 @@ Matrix<> rotationX(double t){// Rotation(t) - поворот на угол t;
             0.0, 0.0, 0.0, 1.0};
     return Matrix<>(4, T);
 }
-Matrix<> rotationY(double t){// Rotation(t) - поворот на угол t;
+Matrix<> rotationY(double t)
+{
     double T[] = {
             cos(t), 0.0, sin(t), 0.0,
             0.0, 1.0, 0.0, 0.0,
@@ -69,7 +72,7 @@ Matrix<> rotationY(double t){// Rotation(t) - поворот на угол t;
             0.0, 0.0, 0.0, 1.0};
     return Matrix<>(4, T);
 }
-Matrix<> rotationZ(double t){// Rotation(t) - поворот на угол t;
+Matrix<> rotationZ(double t){
     double T[] = {
             cos(t), -sin(t), 0.0, 0.0,
             sin(t), cos(t), 0.0, 0.0,
@@ -138,7 +141,6 @@ Matrix<> scaling(double kx, double ky, double kz)
     return Matrix<>(4, T);
 }
 
-
 // mapping (различные виды отражений) - по желанию, для создания матриц отражения можно использовать функцию Scaling.
 Matrix<> mapping(reftype type)
 {
@@ -154,6 +156,7 @@ Matrix<> mapping(reftype type)
         case MAPY:
             T[0] = -1;
             break;
+
         case MAP00:
             T[0] = T[4] = -1;
             break;
@@ -161,7 +164,7 @@ Matrix<> mapping(reftype type)
 
     return Matrix<>(3, T);
 }
-Matrix<> mapping3D(reftype type) // TODO mapping3D
+Matrix<> mapping3D(reftype type)
 {
     double T[16]= {
             1, 0, 0, 0,
@@ -171,16 +174,27 @@ Matrix<> mapping3D(reftype type) // TODO mapping3D
     switch (type)
     {
         case MAPX:
-            T[5] = -1;
+            T[5] = T[10] = -1;
             break;
         case MAPY:
-            T[0] = -1;
+            T[0] = T[10] = -1;
             break;
         case MAPZ:
-            T[10] = -1;
+            T[0] = T[5] = -1;
             break;
+
         case MAP000:
-            T[10] = T[0] = T[5] = -1;
+            T[0] = T[5] = T[10] = -1;
+            break;
+
+        case MAPYZ:
+            T[0] = -1;
+            break;
+        case MAPZX:
+            T[5] = -1;
+            break;
+        case MAPXY:
+            T[10] = -1;
             break;
     }
 

@@ -16,8 +16,9 @@ istream& operator>> (istream& fi, Matrix<Cell>& M);
 template <typename Cell>
 ostream& operator<< (ostream& fo, const Matrix<Cell>& M);
 
-typedef Matrix<> vec3D; // размерности 1xN
+typedef Matrix<> vec3D; // размерности 1x3
 
+// TODO vec3D наследник matrix
 // Индексация с 1
 // Класс для работы с квадратными и прямоугольными матрицами
 template <typename Cell>
@@ -54,7 +55,6 @@ public:
     int getRows() const;
     int getCols() const;
 
-    // TODO векторные функции
     double scalarprod(Matrix<Cell>);    // скалярное произведение
     Matrix<Cell> vecprod(Matrix<Cell>); // векторное произведение
 
@@ -350,10 +350,12 @@ double Matrix<Cell>::scalarprod(Matrix<Cell> right) {
 
 template<typename Cell>
 Matrix<Cell> Matrix<Cell>::vecprod(Matrix<Cell> right) {
-    Matrix<Cell> temp;
+    Matrix<Cell> temp(1, right.cols);
     if (this->cols == right.cols && this->rows == right.rows && right.rows == 1) // если это одинаковые по размеру векторы
     {
-
+        temp(1, 1, this->cells[0][1]*right.cells[0][2] - this->cells[0][2]*right.cells[0][1]);
+        temp(1, 2, -(this->cells[0][0]*right.cells[0][2] - this->cells[0][2]*right.cells[0][0]));
+        temp(1, 3, this->cells[0][0]*right.cells[0][1] - this->cells[0][1]*right.cells[0][0]);
     }
 
     return temp;

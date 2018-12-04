@@ -1,7 +1,3 @@
-//
-// Created by Alex on 01.12.2018.
-//
-
 #ifndef LAB_3_3D_SCENE_CAMERA3D_H
 #define LAB_3_3D_SCENE_CAMERA3D_H
 
@@ -11,24 +7,23 @@
 class Camera3D : public Camera2D
 {
     vec3D Ov, T, N;
-public:
-
-
-private:
     double D;
-    Matrix<> WorldToView,
+    Matrix<> WorldToView,   // матрицы перехода
              ViewToProject,
              WorldToProject;
 
 public:
-    Camera3D() : Camera2D()
+    Camera3D(double X0, double Y0, double px, double py) :
+        Camera2D(X0, Y0, px, py), Ov(1, 3), T(1, 3), N(1,3)
     {
-
+        D = 16;
+        T(1, 2, 1);
+        N(1, 3, 1);
     }
 
     void updateCamera() // обновление матриц перехода
     {
-
+        // TODO обновление матриц перехода
     }
 
     void setOv(const vec3D &Ov) {
@@ -42,15 +37,6 @@ public:
     }
     void setD(double D) {
         Camera3D::D = D;
-    }
-    void setWorldToView(const Matrix<> &WorldToView) {
-        Camera3D::WorldToView = WorldToView;
-    }
-    void setViewToProject(const Matrix<> &ViewToProject) {
-        Camera3D::ViewToProject = ViewToProject;
-    }
-    void setWorldToProject(const Matrix<> &WorldToProject) {
-        Camera3D::WorldToProject = WorldToProject;
     }
 };
 

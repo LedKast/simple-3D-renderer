@@ -4,6 +4,7 @@
 #include <math.h>
 
 #include "Drawing/Scene2D.h"
+#include "Drawing/Scene3D.h"
 #include "Drawing/Model2D.h"
 #include "Drawing/Model3D.h"
 
@@ -19,10 +20,11 @@
 #define WINW 480
 #define WINH 320
 
-Scene2D scene(WINW/2, WINH/2, DEFSCALE, DEFSCALE + 50);
+//Scene2D scene(WINW/2, WINH/2, DEFSCALE, DEFSCALE + 50);
+Scene3D scene(WINW/2, WINH/2, DEFSCALE, DEFSCALE + 50);
 
-void relativeRotation(double);
-void relativeScaling(double, double);
+//void relativeRotation(double);
+//void relativeScaling(double, double);
 
 LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);						// прототип оконной процедуры
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)		// основнаRя процедура
@@ -37,7 +39,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 	wc.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
 	wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
 	wc.hbrBackground = (HBRUSH)(6);
-	wc.lpszMenuName = 0;							// меню в оконном классе отсутствует
+	wc.lpszMenuName = nullptr;							// меню в оконном классе отсутствует
 	wc.lpszClassName = (LPCSTR)"MainWindowClass";	// имя оконного класса, используемое при создании экземпляров окна
 	RegisterClass(&wc);								// регистрация класса wc
 
@@ -48,9 +50,11 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 		200,200, WINW + 200, WINH + 200,			// координаты на экране левого верхнего угла окна, его ширина и высота
 		nullptr,nullptr,hInstance,nullptr);
 
-    // задаем модели из файла
-    Model3D md(PROJECTPATH "models/3Dmodel1_vert", PROJECTPATH "models/3Dmodel1_faces", PROJECTPATH "models/3Dmodel1_im"); // TODO debug
-    scene.addModel(PROJECTPATH "model1_vert.txt", PROJECTPATH "model1_edg.txt");
+    // задаем модель из файла
+    scene.addModel(
+    		PROJECTPATH "models/3Dmodel1_vert",
+    		PROJECTPATH "models/3Dmodel1_faces",
+    		PROJECTPATH "models/3Dmodel1_im");
 
 	ShowWindow(hWnd,nCmdShow);
 	UpdateWindow(hWnd);
@@ -73,7 +77,7 @@ LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// окон�
 		case WM_PAINT:
 		{
 			HDC dc = GetDC(hWnd);
-			scene.Clear(dc);				// вызов реализованного в классе Camera2D метода, отвечающего за очистку рабочей области окна hWnd
+			scene.Clear(dc);				// вызов реализованного в классе Camera_ метода, отвечающего за очистку рабочей области окна hWnd
             scene.render(dc);
 
 			ReleaseDC(hWnd,dc);
@@ -93,62 +97,71 @@ LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// окон�
 
 			switch (wParam) // перемещение модели
 			{
+				/* MODEL MOVE */
+				/// USE arrows
 				case VK_RIGHT:
-					scene.getModel().apply(translation(TRNSPEED, 0));
+					scene.getModel().apply(translation3D(TRNSPEED, 0, 0));
 					break;
-
                 case VK_LEFT:
-                    scene.getModel().apply(translation(-TRNSPEED, 0));
+                    scene.getModel().apply(translation3D(-TRNSPEED, 0, 0));
                     break;
-
                 case VK_UP:
-                    scene.getModel().apply(translation(0, TRNSPEED));
+                    scene.getModel().apply(translation3D(0, 0, -TRNSPEED));
                     break;
-
                 case VK_DOWN:
-                    scene.getModel().apply(translation(0, -TRNSPEED));
+                    scene.getModel().apply(translation3D(0, 0, TRNSPEED));
                     break;
 
-				case 0x31:
+				/* MODELS CONTROL */
+				/// USE [{ - add,  }] - del,  1 - next,  2 - prev
+				case VK_OEM_4: 	// [{ key
+					scene.addModel(
+							PROJECTPATH "models/3Dmodel1_vert",
+							PROJECTPATH "models/3Dmodel1_faces",
+							PROJECTPATH "models/3Dmodel1_im");
+					break;
+				case VK_OEM_6: 	// }] key
+					scene.removeLastModel();
+					break;
+				case 0x31: 		// 1 key
 					scene.selectPrevModel(); // выбор предыдущей модели
 					break;
-
-				case 0x32:
+				case 0x32: 		// 2 key
 					scene.selectNextModel(); // выбор следующей
 					break;
 
+
+				/* ROTATION */
+				/// USE W A S D
 					// A
-				case 0x41: // можно задать любую модель. Кнопка "A"
-					scene.addModel(PROJECTPATH "model1_vert.txt", PROJECTPATH "model1_edg.txt");
+				case 0x41: // поворот по Y
+					scene.getModel().apply(rotationY(RTSPEED));
 					break;
-
 					// D
-				case 0x44: // удаление последней модели. Кнопка "D"
-					scene.removeLastModel();
+				case 0x44: // поворот по Y
+					scene.getModel().apply(rotationY(-RTSPEED));
 					break;
-				/*
-				 * Вращение вокруг центра фигуры
-				 * Задавать центр из файла
-				 */
 					// W
-				case 0x57: // поворот против часовой
-
-					relativeRotation(RTSPEED);
+				case 0x57: // поворот по Х
+					scene.getModel().apply(rotationX(RTSPEED));
+					//relativeRotation(RTSPEED);
 					break;
 					// S
-				case 0x53: // поворот по часовой
-
-					relativeRotation(-RTSPEED);
+				case 0x53: // поворот по Х
+					scene.getModel().apply(rotationX(-RTSPEED));
+					//relativeRotation(-RTSPEED);
 					break;
 
+				/* MODEL SIZE */
+				/// USE + -
 				case VK_OEM_PLUS: // изменение размера модели
-					relativeScaling(1,1 + SCLSPEED);
-					//scene.getModel().apply(scaling(1 + SCLSPEED, 1 + SCLSPEED));
+					//relativeScaling(1,1 + SCLSPEED);
+					scene.getModel().apply(scaling(1 + SCLSPEED, 1 + SCLSPEED, 1 + SCLSPEED));
 					break;
 
 				case VK_OEM_MINUS: // изменение размера модели
-					relativeScaling(1,1 - SCLSPEED);
-					//scene.getModel().apply(scaling(1 - SCLSPEED, 1 - SCLSPEED));
+					//relativeScaling(1,1 - SCLSPEED);
+					scene.getModel().apply(scaling(1 - SCLSPEED, 1 - SCLSPEED, 1 - SCLSPEED));
 					break;
 			}
 			InvalidateRect(hWnd, nullptr, false);
@@ -180,8 +193,6 @@ LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// окон�
 			GetCursorPos(&pt);
 			ScreenToClient(hWnd, &pt);
 
-			int x = GET_X_LPARAM(lParam);
-			int y = GET_Y_LPARAM(lParam);
 			scene.scale(pt.x, pt.y, GET_WHEEL_DELTA_WPARAM(wParam) > 0);
 
 			InvalidateRect(hWnd, nullptr, false);
@@ -203,32 +214,31 @@ LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// окон�
 }
 
 
-
-void relativeRotation(double angle)
-{
-	double currPosX = scene.getModel().getPosX();
-	double currPosY = scene.getModel().getPosY();
-	// составное аффинное преобразование
-	// перемещаем в (0,0), делаем поворот, и возвращаем назад
-	scene.getModel().apply(
-			translation(
-					currPosX,
-					currPosY) *
-			rotation(angle) *
-			translation(
-					-currPosX,
-					-currPosY)
-	);
-}
-
-void relativeScaling(double x, double y)
-{
-	double currOVecX = scene.getModel().getOVecY();
-	double currOVecY = scene.getModel().getOVecX();
-
-	scene.getModel().apply(
-			rotation(currOVecX, -currOVecY) *
-			scaling(x, y) *
-			rotation(currOVecX, currOVecY)
-	);
-}
+//// составные преобразование 2D
+//void relativeRotation(double angle)
+//{
+//	double currPosX = scene.getModel().getPosX();
+//	double currPosY = scene.getModel().getPosY();
+//	// составное аффинное преобразование
+//	// перемещаем в (0,0), делаем поворот, и возвращаем назад
+//	scene.getModel().apply(
+//			translation(
+//					currPosX,
+//					currPosY) *
+//			rotation(angle) *
+//			translation(
+//					-currPosX,
+//					-currPosY)
+//	);
+//}
+//void relativeScaling(double x, double y)
+//{
+//	double currOVecX = scene.getModel().getOVecY();
+//	double currOVecY = scene.getModel().getOVecX();
+//
+//	scene.getModel().apply(
+//			rotation(currOVecX, -currOVecY) *
+//			scaling(x, y) *
+//			rotation(currOVecX, currOVecY)
+//	);
+//}
