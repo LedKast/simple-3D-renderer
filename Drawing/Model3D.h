@@ -15,7 +15,8 @@ class Model3D : public Model2D
     Matrix<int> imEdges; // мнимые рёбра. матрица 2xM, где М - кол-во мнимых рёбер
 
     // создание карты рёбер по заданной карте граней
-    void setEdges() {
+    void setEdges()
+    {
         edges = Matrix<bool>(faces.getRows());
         for (int i = 1; i <= faces.getRows(); ++i)
             for (int j = 1; j <= 2; ++j) {
@@ -33,19 +34,19 @@ public:
     Model3D() : Model2D(), faces(), projVertices(), imEdges() { }
 
     // конструктор создания модели по заданным карте вершин и карте граней
-    Model3D(const Matrix<> &v, const Matrix<int> &f, const Matrix<int> &im) : Model2D(v), faces(f), projVertices(), imEdges(im)
+    Model3D(const Matrix<> &v, const Matrix<int> &f, const Matrix<int> &im) :
+        Model2D(v), faces(f), projVertices(), imEdges(im)
     {
         setEdges();
     }
 
     // конструктор создания модели по именам файлов, в которых лежат карта вершин и карта граней
-    Model3D(string v, string f, string im) : Model2D(v), projVertices(), imEdges()
+    Model3D(string v, string f, string im) :
+        Model2D(v), projVertices(), imEdges()
     {
         faces = matrixFromFile<int>(f);
         imEdges = matrixFromFile<int>(im);
         setEdges();
-//        cout << edges; // TODO debug
-//        cout << endl;
     }
 
     Matrix<int> getFaces() { return faces; }

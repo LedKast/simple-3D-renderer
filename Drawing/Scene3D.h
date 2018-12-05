@@ -43,9 +43,11 @@ public:
 
     }
 
-    void apply() // вызывает apply и project у текущей модели
+    void apply(Matrix<> AT) // вызывает apply и project у текущей модели
     {
         // TODO scene apply
+        model->apply(AT);
+        model->project(Matrix<>());
     }
 
     void addModel(Matrix<> &v, const Matrix<int> &f, const Matrix<int> &im) // добавить модель из матрицы

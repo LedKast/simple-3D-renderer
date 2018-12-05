@@ -3,7 +3,7 @@ project(Lab_3_3D_scene)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_library(gdi32 STATIC IMPORTED Drawing/Model3D.h Drawing/Camera3D.h Drawing/Scene3D.h)
+add_library(gdi32 STATIC IMPORTED Drawing/Model3D.h Drawing/Camera3D.h Drawing/Scene3D.h Math/vec3D.h)
 set_property(TARGET gdi32 PROPERTY IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/lib/gdi32.lib)
 add_dependencies(gdi32 project_gdi32)
 
