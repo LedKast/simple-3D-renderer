@@ -13,7 +13,7 @@ class Scene2D : public Camera2D
     int modelcount;
     int currmodel;
     Model2D *model;
-public:
+protected:
 
 	Scene2D(double X0, double Y0, double px, double py) : Camera2D(X0, Y0, px, py)
 	{
@@ -44,7 +44,7 @@ public:
 
 
     }
-
+public:
     void addModel(Matrix<> &vert, Matrix<bool> &edg) // добавить модель из матрицы
     {
 	    modelcount++;

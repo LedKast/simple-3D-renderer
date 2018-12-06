@@ -8,6 +8,7 @@
 
 // Вариант #6
 // предполагается, что последняя точка в модели это центр фигуры
+// identity заменилось на identitty3D
 class Model2D
 {
 protected:
@@ -20,7 +21,7 @@ protected:
     Matrix<T> matrixFromFile(string file);
 
 public:
-    Model2D() : vertices(), edges(), initVertices(), cumulativeAT(identity()) {}
+    Model2D() : vertices(), edges(), initVertices(), cumulativeAT(identity3D()) {}
 
     Model2D(Matrix<> vert, Matrix<bool> edg);
     explicit Model2D(Matrix<> vert);
@@ -81,17 +82,17 @@ Model2D::Model2D(Matrix<> vert, const Matrix<bool> edg) : edges(edg), initVertic
 {
     initVertices = vertices = vert;
 }
-Model2D::Model2D(Matrix<> vert) : edges(), initVertices(), cumulativeAT(identity())
+Model2D::Model2D(Matrix<> vert) : edges(), initVertices(), cumulativeAT(identity3D())
 {
     initVertices = vertices = vert;
 }
 
-Model2D::Model2D(string vert, string edg) : cumulativeAT(identity()) // конструктор задания данных из файла
+Model2D::Model2D(string vert, string edg) : cumulativeAT(identity3D()) // конструктор задания данных из файла
 {
     initVertices = vertices = matrixFromFile<>(vert);
     edges = matrixFromFile<bool>(edg);
 }
-Model2D::Model2D(string vert) : cumulativeAT(identity()) // конструктор задания данных из файла
+Model2D::Model2D(string vert) : cumulativeAT(identity3D()) // конструктор задания данных из файла
 {
     initVertices = vertices = matrixFromFile<>(vert);
 }

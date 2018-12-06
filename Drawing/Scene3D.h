@@ -16,10 +16,9 @@ public:
     {
         model = nullptr;
         modelcount = currmodel = 0;
-        // model->project(); //TODO init project
     }
 
-    void render(HDC dc) // TODO change render
+    void render(HDC dc) // TODO check render
     {
         HPEN pen;
 
@@ -34,8 +33,8 @@ public:
                 for (int j = i + 1; j <= model[curr].getEdges().getCols(); ++j)
                     if (model[curr].getEdges()(i, j)) // если в верхнетреугольной матрице стоит 1, значит проводим линию
                     {
-                        MoveTo(model[curr].getVertexX(i), model[curr].getVertexY(i));
-                        LineTo(dc, model[curr].getVertexX(j), model[curr].getVertexY(j));
+                        MoveTo(model[curr].getProjVertexX(i), model[curr].getProjVertexY(i));
+                        LineTo(dc, model[curr].getProjVertexX(j), model[curr].getProjVertexY(j));
                     }
             DeleteObject(SelectObject(dc, pen));
         }
@@ -45,9 +44,8 @@ public:
 
     void apply(Matrix<> AT) // вызывает apply и project у текущей модели
     {
-        // TODO scene apply
         model->apply(AT);
-        model->project(Matrix<>());
+        model->project(WorldToProject);
     }
 
     void addModel(Matrix<> &v, const Matrix<int> &f, const Matrix<int> &im) // добавить модель из матрицы
@@ -59,6 +57,8 @@ public:
 
         temp[modelcount - 1] = Model3D(v, f, im); // добавляем новую модель
         model = temp;
+
+        model->project(WorldToProject);
     }
     void addModel(string v, string f, string im) // добавить модель из файла
     {
@@ -70,6 +70,8 @@ public:
         temp[modelcount - 1] = Model3D(v, f, im); // добавляем новую модель
         //delete model;
         model = temp;
+
+        model->project(WorldToProject);
     }
     void removeLastModel() // удалить последнюю модель
     {

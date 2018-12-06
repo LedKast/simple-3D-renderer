@@ -7,28 +7,60 @@
 
 class Camera3D : public Camera2D
 {
+protected:
     vec3D<>
             Ov, // координаты точки экранной плоскости (напротив наблюдателя)
             T,  // вертикальный вектор для наблюдателя
             N;  // нормаль
+
+    vec3D<> i, j, k; // базисные векторы
+
     double D;   // расстояние между экраном и пользователем
-    Matrix<> WorldToView,   // матрицы перехода
-             ViewToProject,
-             WorldToProject;
+    Matrix<> WorldToView,       // 4x4 матрицы перехода
+             ViewToProject,     // 3x4
+             WorldToProject;    // 3x4
 
 public:
     Camera3D(double X0, double Y0, double px, double py) :
-        Camera2D(X0, Y0, px, py), Ov(), T(), N()
+        Camera2D(X0, Y0, px, py), Ov(), T(), N(), i(), j(), k()
     {
         D = 16;
-        T(1, 2, 1);
-        N(1, 3, 1);
+        T(2, 1);
+
+        //N(2, 1);
+        N(3, 1);
+
+        updateCamera();
     }
 
-    void updateCamera() // обновление матриц перехода
+    // правая колонка S w->v = скалярное произведение Ov и i, j, k по очереди
+    /// Вызывается при изменении Ov T N D
+    void updateCamera() // обновление матриц перехода.
     {
-        // TODO обновление матриц перехода
+        // задаем базисные векторы
+        k = N * (1.0 / N.norm());
+        i = (T.vecprod(N)) * (1.0 / (T.vecprod(N)).norm());
+        j = (k.vecprod(i)) * (1.0 / (k.vecprod(i)).norm());
 
+        // обновление S v->p
+        double T1[] = {
+                1, 0, 0, 0,
+                0, 1, 0 ,0,
+                0, 0, -1/D, 1
+        };
+        ViewToProject = Matrix<>(3, 4, T1);
+
+        // обновление S w->v
+        double T2[] = {
+            i(1), i(2), i(3), -(Ov.scalarprod(i)),
+            j(1), j(2), j(3), -(Ov.scalarprod(j)),
+            k(1), k(2), k(3), -(Ov.scalarprod(k)),
+            0, 0, 0, 1
+        };
+        WorldToView = Matrix<>(4, 4, T2);
+
+        // обновление S w->p
+        WorldToProject = ViewToProject * WorldToView;
     }
 
     void setOv(const vec3D<> &Ov) {

@@ -46,7 +46,6 @@ public:
     Matrix(int rows, Cell* list);                           // Конструктор квадратной матрицы из списка
     ~Matrix();								                // Деструктор
 
-    Cell& operator() (int i); // получение значения из вектора
     inline Cell& operator() (int i, int j) { return cells[i-1][j-1]; }             // получение элемента
     inline void operator() (int i, int j, Cell data) { cells[i-1][j-1] = data; }   // установка элемента
 
@@ -55,7 +54,7 @@ public:
 
     Matrix<Cell> getTranspose();    // вернет транспонированную матрицу
     double transpose();             // транспонирование матрицы
-    double norm();                  // норма вектора (sum sqrt(x[i]*x[i]))
+    double norm();                  // норма вектора sqrt(sum (x[i]*x[i]))
 
     operator double();                      // функция приведения к типу double
     Matrix& operator = (const Matrix&);		// Перегрузка оператора присваивания
@@ -315,11 +314,6 @@ double Matrix<Cell>::randomDouble(int left, int right)
         temp = urd(gen);
     } while (abs(temp) < 0.5); //пропускаем нули
     return temp;
-}
-
-template<typename Cell>
-inline Cell &Matrix<Cell>::operator()(int i){
-    return (rows == 1) ? cells[1][i-1] : cells[i-1][1];
 }
 
 template<typename Cell>

@@ -3,9 +3,9 @@
 #include <windowsx.h>
 #include <math.h>
 
-#include "Drawing/Scene2D.h"
+//#include "Drawing/Scene2D.h"
 #include "Drawing/Scene3D.h"
-#include "Drawing/Model2D.h"
+//#include "Drawing/Model2D.h"
 #include "Drawing/Model3D.h"
 
 #include "Math/Matrix.h"
@@ -15,7 +15,8 @@
 #define SCLSPEED 0.2  	// скорость масштабирования
 #define RTSPEED 3.14/24 // скорость вращения
 
-#define PROJECTPATH "d:/DOCs/3_course/CGraphics/CG_3D_Scene/"
+// TODO change PATH
+#define PROJECTPATH "d:/DOCs/3_course/CGraphics/Lab_3_3D_Scene/"
 #define DEFSCALE 50 	//стандартный масштаб сцены
 #define WINW 480
 #define WINH 320
@@ -100,16 +101,16 @@ LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// окон�
 				/* MODEL MOVE */
 				/// USE arrows
 				case VK_RIGHT:
-					scene.getModel().apply(translation3D(TRNSPEED, 0, 0));
+					scene.apply(translation3D(TRNSPEED, 0, 0));
 					break;
                 case VK_LEFT:
-                    scene.getModel().apply(translation3D(-TRNSPEED, 0, 0));
+                    scene.apply(translation3D(-TRNSPEED, 0, 0));
                     break;
                 case VK_UP:
-                    scene.getModel().apply(translation3D(0, 0, -TRNSPEED));
+                    scene.apply(translation3D(0, TRNSPEED, 0));
                     break;
                 case VK_DOWN:
-                    scene.getModel().apply(translation3D(0, 0, TRNSPEED));
+                    scene.apply(translation3D(0, -TRNSPEED, 0));
                     break;
 
 				/* MODELS CONTROL */
@@ -135,20 +136,20 @@ LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// окон�
 				/// USE W A S D
 					// A
 				case 0x41: // поворот по Y
-					scene.getModel().apply(rotationY(RTSPEED));
+					scene.apply(rotationY(RTSPEED));
 					break;
 					// D
 				case 0x44: // поворот по Y
-					scene.getModel().apply(rotationY(-RTSPEED));
+					scene.apply(rotationY(-RTSPEED));
 					break;
 					// W
 				case 0x57: // поворот по Х
-					scene.getModel().apply(rotationX(RTSPEED));
+					scene.apply(rotationX(RTSPEED));
 					//relativeRotation(RTSPEED);
 					break;
 					// S
 				case 0x53: // поворот по Х
-					scene.getModel().apply(rotationX(-RTSPEED));
+					scene.apply(rotationX(-RTSPEED));
 					//relativeRotation(-RTSPEED);
 					break;
 

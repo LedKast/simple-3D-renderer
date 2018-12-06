@@ -16,6 +16,7 @@ class Model3D : public Model2D
 
     // создание карты рёбер по заданной карте граней
     void setEdges()
+
     {
         edges = Matrix<bool>(faces.getRows());
         for (int i = 1; i <= faces.getRows(); ++i)
@@ -52,9 +53,12 @@ public:
     Matrix<int> getFaces() { return faces; }
     double getVertexZ(int i) { return vertices(3, i); }
 
+    double getProjVertexX(int i) { return projVertices(1, i); }
+    double getProjVertexY(int i) { return projVertices(2, i); }
+
     void project(Matrix<> P) // проецирование модели.
     {
-        // TODO projector
+        projVertices = P * vertices;
     }
 };
 
