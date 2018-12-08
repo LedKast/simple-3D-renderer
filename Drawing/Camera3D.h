@@ -13,8 +13,6 @@ protected:
             T,  // вертикальный вектор для наблюдателя
             N;  // нормаль
 
-    vec3D<> i, j, k; // базисные векторы
-
     double D;   // расстояние между экраном и пользователем
     Matrix<> WorldToView,       // 4x4 матрицы перехода
              ViewToProject,     // 3x4
@@ -22,12 +20,13 @@ protected:
 
 public:
     Camera3D(double X0, double Y0, double px, double py) :
-        Camera2D(X0, Y0, px, py), Ov(), T(), N(), i(), j(), k()
+        Camera2D(X0, Y0, px, py), Ov(), T(), N()
     {
         D = 16;
         T(2, 1);
 
-        //N(2, 1);
+        N(1, 1);
+        N(2, 1);
         N(3, 1);
 
         updateCamera();
@@ -38,15 +37,15 @@ public:
     void updateCamera() // обновление матриц перехода.
     {
         // задаем базисные векторы
-        k = N * (1.0 / N.norm());
-        i = (T.vecprod(N)) * (1.0 / (T.vecprod(N)).norm());
-        j = (k.vecprod(i)) * (1.0 / (k.vecprod(i)).norm());
+        vec3D<> k = N * (1.0 / N.norm());
+        vec3D<> i = (T.vecprod(N)) * (1.0 / (T.vecprod(N)).norm());
+        vec3D<> j = (k.vecprod(i)) * (1.0 / (k.vecprod(i)).norm());
 
         // обновление S v->p
         double T1[] = {
                 1, 0, 0, 0,
                 0, 1, 0 ,0,
-                0, 0, -1/D, 1
+                0, 0, -(1/D), 1
         };
         ViewToProject = Matrix<>(3, 4, T1);
 

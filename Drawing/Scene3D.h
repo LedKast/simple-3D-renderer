@@ -44,8 +44,8 @@ public:
 
     void apply(Matrix<> AT) // вызывает apply и project у текущей модели
     {
-        model->apply(AT);
-        model->project(WorldToProject);
+        model[currmodel].apply(AT);
+        model[currmodel].project(WorldToProject);
     }
 
     void addModel(Matrix<> &v, const Matrix<int> &f, const Matrix<int> &im) // добавить модель из матрицы
@@ -58,7 +58,7 @@ public:
         temp[modelcount - 1] = Model3D(v, f, im); // добавляем новую модель
         model = temp;
 
-        model->project(WorldToProject);
+        model[modelcount - 1].project(WorldToProject);
     }
     void addModel(string v, string f, string im) // добавить модель из файла
     {
@@ -71,7 +71,7 @@ public:
         //delete model;
         model = temp;
 
-        model->project(WorldToProject);
+        model[modelcount - 1].project(WorldToProject);
     }
     void removeLastModel() // удалить последнюю модель
     {

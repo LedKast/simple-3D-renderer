@@ -21,7 +21,6 @@
 #define WINW 480
 #define WINH 320
 
-//Scene2D scene(WINW/2, WINH/2, DEFSCALE, DEFSCALE + 50);
 Scene3D scene(WINW/2, WINH/2, DEFSCALE, DEFSCALE + 50);
 
 //void relativeRotation(double);
@@ -107,10 +106,10 @@ LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// окон�
                     scene.apply(translation3D(-TRNSPEED, 0, 0));
                     break;
                 case VK_UP:
-                    scene.apply(translation3D(0, TRNSPEED, 0));
+                    scene.apply(translation3D(0, 0, -TRNSPEED));
                     break;
                 case VK_DOWN:
-                    scene.apply(translation3D(0, -TRNSPEED, 0));
+                    scene.apply(translation3D(0, 0, TRNSPEED));
                     break;
 
 				/* MODELS CONTROL */
@@ -157,12 +156,12 @@ LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// окон�
 				/// USE + -
 				case VK_OEM_PLUS: // изменение размера модели
 					//relativeScaling(1,1 + SCLSPEED);
-					scene.getModel().apply(scaling(1 + SCLSPEED, 1 + SCLSPEED, 1 + SCLSPEED));
+					scene.apply(scaling(1 + SCLSPEED, 1 + SCLSPEED, 1 + SCLSPEED));
 					break;
 
 				case VK_OEM_MINUS: // изменение размера модели
 					//relativeScaling(1,1 - SCLSPEED);
-					scene.getModel().apply(scaling(1 - SCLSPEED, 1 - SCLSPEED, 1 - SCLSPEED));
+					scene.apply(scaling(1 - SCLSPEED, 1 - SCLSPEED, 1 - SCLSPEED));
 					break;
 			}
 			InvalidateRect(hWnd, nullptr, false);
