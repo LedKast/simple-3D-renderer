@@ -8,7 +8,7 @@
 
 // Вариант #6
 // предполагается, что последняя точка в модели это центр фигуры
-// identity заменилось на identitty3D
+// UPD identity заменилось на identity3D
 class Model2D
 {
 protected:
@@ -78,7 +78,7 @@ Matrix<T> Model2D::matrixFromFile(string file)
     return mtemp;
 }
 
-Model2D::Model2D(Matrix<> vert, const Matrix<bool> edg) : edges(edg), initVertices(), cumulativeAT(identity())
+Model2D::Model2D(Matrix<> vert, const Matrix<bool> edg) : edges(edg), initVertices(), cumulativeAT(identity3D())
 {
     initVertices = vertices = vert;
 }

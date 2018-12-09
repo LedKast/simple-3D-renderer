@@ -8,15 +8,15 @@
 //#include "Drawing/Model2D.h"
 #include "Drawing/Model3D.h"
 
-#include "Math/Matrix.h"
+//#include "Math/Matrix.h"
 #include "Math/AffineTransform.h"
 
-#define TRNSPEED 0.75 	// скорость переноса
+#define TRNSPEED 2 	// скорость переноса
 #define SCLSPEED 0.2  	// скорость масштабирования
 #define RTSPEED 3.14/24 // скорость вращения
 
 // TODO change PATH
-#define PROJECTPATH "d:/DOCs/3_course/CGraphics/Lab_3_3D_Scene/"
+#define PROJECTPATH "d:/DOCs/3_course/CGraphics/CG_3D_Scene/"
 #define DEFSCALE 50 	//стандартный масштаб сцены
 #define WINW 480
 #define WINH 320
@@ -106,10 +106,10 @@ LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// окон�
                     scene.apply(translation3D(-TRNSPEED, 0, 0));
                     break;
                 case VK_UP:
-                    scene.apply(translation3D(0, 0, -TRNSPEED));
+                    scene.apply(translation3D(0, 0, TRNSPEED));
                     break;
                 case VK_DOWN:
-                    scene.apply(translation3D(0, 0, TRNSPEED));
+                    scene.apply(translation3D(0, 0, -TRNSPEED));
                     break;
 
 				/* MODELS CONTROL */
@@ -163,6 +163,8 @@ LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// окон�
 					//relativeScaling(1,1 - SCLSPEED);
 					scene.apply(scaling(1 - SCLSPEED, 1 - SCLSPEED, 1 - SCLSPEED));
 					break;
+
+
 			}
 			InvalidateRect(hWnd, nullptr, false);
 			return 0;
@@ -193,7 +195,11 @@ LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// окон�
 			GetCursorPos(&pt);
 			ScreenToClient(hWnd, &pt);
 
-			scene.scale(pt.x, pt.y, GET_WHEEL_DELTA_WPARAM(wParam) > 0);
+            GET_WHEEL_DELTA_WPARAM(wParam) > 0 ?
+                scene.incD(4) : scene.decD(4);
+            scene.updateCamera();
+            scene.apply(identity3D());
+			//scene.scale(pt.x, pt.y, GET_WHEEL_DELTA_WPARAM(wParam) > 0);
 
 			InvalidateRect(hWnd, nullptr, false);
 			return 0;

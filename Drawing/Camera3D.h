@@ -25,8 +25,11 @@ public:
         D = 16;
         T(2, 1);
 
-        N(1, 1);
-        N(2, 1);
+        //Ov(1, 1);
+        //Ov(2, 1);
+
+        //N(1, 1);
+        //N(2, 1);
         N(3, 1);
 
         updateCamera();
@@ -71,8 +74,11 @@ public:
     void setN(const vec3D<> &N) {
         Camera3D::N = N;
     }
-    void setD(double D) {
-        Camera3D::D = D;
+    void incD(double i) {
+        D += i;
+    }
+    void decD(double i) {
+        D -= i;
     }
 };
 

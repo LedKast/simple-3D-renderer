@@ -18,14 +18,14 @@ public:
         modelcount = currmodel = 0;
     }
 
-    void render(HDC dc) // TODO check render
+    void render(HDC dc)
     {
         HPEN pen;
 
         for (int curr = 0; curr < modelcount; ++curr) // цикл по моделькам
         {
             if (curr == currmodel)
-                pen = (HPEN)WIN32::SelectObject(dc, WIN32::CreatePen(PS_SOLID, 2, ORANGE)); // устанавливаем цвет если выбрана текущая модель
+                pen = (HPEN)WIN32::SelectObject(dc, WIN32::CreatePen(PS_SOLID, 2, GREEN)); // устанавливаем цвет если выбрана текущая модель
             else
                 pen = (HPEN)WIN32::SelectObject(dc, WIN32::CreatePen(PS_SOLID, 2, GRAY));
 
@@ -68,7 +68,6 @@ public:
             temp[i] = model[i];
 
         temp[modelcount - 1] = Model3D(v, f, im); // добавляем новую модель
-        //delete model;
         model = temp;
 
         model[modelcount - 1].project(WorldToProject);
@@ -84,7 +83,6 @@ public:
             temp[i] = model[i];
 
         // возможно вызывать деструктор конкретной модели
-        //delete model;
         model = temp;
     }
     void selectModel(int i) // выбрать модель по номеру
