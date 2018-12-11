@@ -16,15 +16,15 @@
 #define RTSPEED 3.14/24 // скорость вращения
 
 // TODO change PATH
-#define PROJECTPATH "d:/DOCs/3_course/CGraphics/CG_3D_Scene/"
+#define MODELSPATH "d:/DOCs/3_course/CGraphics/CG_3D_Scene/models/"
 #define DEFSCALE 50 	//стандартный масштаб сцены
 #define WINW 480
 #define WINH 320
 
 Scene3D scene(WINW/2, WINH/2, DEFSCALE, DEFSCALE + 50);
 
-//void relativeRotation(double);
-//void relativeScaling(double, double);
+void rotationL0(double x, double y, double z, double angle);
+void relativeScaling(double, double);
 
 LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);						// прототип оконной процедуры
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)		// основнаRя процедура
@@ -50,16 +50,23 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 		200,200, WINW + 200, WINH + 200,			// координаты на экране левого верхнего угла окна, его ширина и высота
 		nullptr,nullptr,hInstance,nullptr);
 
-    // задаем модель из файла
+    // задаем модели из файла
     scene.addModel(
-    		PROJECTPATH "models/3Dmodel1_vert",
-    		PROJECTPATH "models/3Dmodel1_faces",
-    		PROJECTPATH "models/3Dmodel1_im");
+            MODELSPATH "3Dmodel1_vert",
+            MODELSPATH "3Dmodel1_faces",
+            MODELSPATH "3Dmodel1_im");
+
+    scene.addModel(
+            MODELSPATH "cross_vert",
+            MODELSPATH "cross_faces",
+            MODELSPATH "cross_im");
+
+
 
 	ShowWindow(hWnd,nCmdShow);
 	UpdateWindow(hWnd);
 
-	// ¬торая составляющая часть основной процедуры - основной цикл обработки системных сообщений, который ожидает сообщения и рассылает их соответствующим окнам
+	// Вторая составляющая часть основной процедуры - основной цикл обработки системных сообщений, который ожидает сообщения и рассылает их соответствующим окнам
 	MSG msg;
 	while(GetMessage(&msg,nullptr,0,0))				// функция GetMessage выбирает из очереди сообщение и заносит его в структуру msg
 	{
@@ -106,19 +113,19 @@ LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// окон�
                     scene.apply(translation3D(-TRNSPEED, 0, 0));
                     break;
                 case VK_UP:
-                    scene.apply(translation3D(0, 0, TRNSPEED));
+                    scene.apply(translation3D(0, 0, -TRNSPEED));
                     break;
                 case VK_DOWN:
-                    scene.apply(translation3D(0, 0, -TRNSPEED));
+                    scene.apply(translation3D(0, 0, TRNSPEED));
                     break;
 
 				/* MODELS CONTROL */
 				/// USE [{ - add,  }] - del,  1 - next,  2 - prev
 				case VK_OEM_4: 	// [{ key
 					scene.addModel(
-							PROJECTPATH "models/3Dmodel1_vert",
-							PROJECTPATH "models/3Dmodel1_faces",
-							PROJECTPATH "models/3Dmodel1_im");
+							MODELSPATH "models/3Dmodel1_vert",
+							MODELSPATH "models/3Dmodel1_faces",
+							MODELSPATH "models/3Dmodel1_im");
 					break;
 				case VK_OEM_6: 	// }] key
 					scene.removeLastModel();
@@ -144,31 +151,43 @@ LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// окон�
 					// W
 				case 0x57: // поворот по Х
 					scene.apply(rotationX(RTSPEED));
-					//relativeRotation(RTSPEED);
 					break;
 					// S
 				case 0x53: // поворот по Х
 					scene.apply(rotationX(-RTSPEED));
-					//relativeRotation(-RTSPEED);
 					break;
 
 				/* MODEL SIZE */
 				/// USE + -
 				case VK_OEM_PLUS: // изменение размера модели
-					//relativeScaling(1,1 + SCLSPEED);
 					scene.apply(scaling(1 + SCLSPEED, 1 + SCLSPEED, 1 + SCLSPEED));
 					break;
 
 				case VK_OEM_MINUS: // изменение размера модели
-					//relativeScaling(1,1 - SCLSPEED);
 					scene.apply(scaling(1 - SCLSPEED, 1 - SCLSPEED, 1 - SCLSPEED));
 					break;
 
-
+                /* complex affine transforms */
+                /// USE Z X C V
+                case 0x5A:  // Z
+                    rotationL0(2, -5.5, 1, RTSPEED); // TODO брать вектор из текущей точки
+                    break;
+//                case 0x58:  // X
+//                    scene.apply();
+//                    break;
+//                case 0x43:  // C
+//                    scene.apply();
+//                    break;
+//                case 0x56:  // V
+//                    scene.apply();
+//                    break;
 			}
 			InvalidateRect(hWnd, nullptr, false);
 			return 0;
 		}
+
+		/* CAMERA MOVE */
+		/// USE mouse
 		case WM_LBUTTONDOWN:
 		{
 			scene.StartDragging(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
@@ -183,22 +202,27 @@ LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// окон�
 		{
 			if (scene.isDragging)
 			{
-				scene.drag(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+				scene.moveCamera(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+
+				scene.updateCamera();
+				scene.fullProject();
+
 				InvalidateRect(hWnd, nullptr, false);
 			}
 			break;
 		}
 
+		/* DISTANCE */
+		/// USE mousewheel
 		case WM_MOUSEWHEEL:
 		{
 			POINT pt;
 			GetCursorPos(&pt);
 			ScreenToClient(hWnd, &pt);
 
-            GET_WHEEL_DELTA_WPARAM(wParam) > 0 ?
-                scene.incD(4) : scene.decD(4);
+            GET_WHEEL_DELTA_WPARAM(wParam) < 0 ? scene.incD(2) : scene.decD(2);
             scene.updateCamera();
-            scene.apply(identity3D());
+            scene.fullProject();
 			//scene.scale(pt.x, pt.y, GET_WHEEL_DELTA_WPARAM(wParam) > 0);
 
 			InvalidateRect(hWnd, nullptr, false);
@@ -220,8 +244,29 @@ LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// окон�
 }
 
 
-//// составные преобразование 2D
-//void relativeRotation(double angle)
+/* complex affine transforms 3D */
+
+// поворот вокруг вектора C0::С1(x,y,z), C0 - начало координат
+void rotationL0(double x, double y, double z, double angle)
+{
+    // текущие координаты центра фигуры
+
+	double currPosX = scene.getModel().getPosX();
+	double currPosY = scene.getModel().getPosY();
+	double currPosZ = scene.getModel().getPosZ();
+
+	scene.apply(
+//			translation3D(currPosX, currPosY, currPosZ) * // точка c0
+            (rotationX(-y, z) * rotationZ(-x, y)) *
+			rotationX(angle) *
+            (rotationZ(-x, -y) * rotationX(-y, -z))// *
+//			translation3D(-currPosX, -currPosY, -currPosZ)
+	);
+}
+
+
+/// составные 2D
+//void rotationL0(double angle)
 //{
 //	double currPosX = scene.getModel().getPosX();
 //	double currPosY = scene.getModel().getPosY();

@@ -341,7 +341,9 @@
     <inspection_tool class="OCNotLocalizedStringInspection" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="OCNotReleasedIvarInspection" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="OCSimplifyInspection" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="OCUnusedClassInspection" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="OCUnusedClassInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="Project Files" level="WARNING" enabled="true" />
+    </inspection_tool>
     <inspection_tool class="OCUnusedGlobalDeclarationInspection" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="OCUnusedInstanceVariableInspection" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="OCUnusedMacroInspection" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -596,7 +598,7 @@
     <inspection_tool class="UnusedDefine" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="UnusedExpressionResult" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnusedImportStatement" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="UnusedIncludeDirective" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="UnusedIncludeDirective" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnusedLocalVariable" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnusedLocalization" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnusedParameter" enabled="true" level="WARNING" enabled_by_default="true" />

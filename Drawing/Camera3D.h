@@ -18,6 +18,25 @@ protected:
              ViewToProject,     // 3x4
              WorldToProject;    // 3x4
 
+    void setOv(double *ov) {
+        Camera3D::Ov = ov;
+    }
+    void setT(double *t) {
+        Camera3D::T = t;
+    }
+    void setN(double *n) {
+        Camera3D::N = n;
+    }
+    void setOv(const vec3D<> &Ov) {
+        Camera3D::Ov = Ov;
+    }
+    void setT(const vec3D<> &T) {
+        Camera3D::T = T;
+    }
+    void setN(const vec3D<> &N) {
+        Camera3D::N = N;
+    }
+
 public:
     Camera3D(double X0, double Y0, double px, double py) :
         Camera2D(X0, Y0, px, py), Ov(), T(), N()
@@ -25,11 +44,6 @@ public:
         D = 16;
         T(2, 1);
 
-        //Ov(1, 1);
-        //Ov(2, 1);
-
-        //N(1, 1);
-        //N(2, 1);
         N(3, 1);
 
         updateCamera();
@@ -65,20 +79,69 @@ public:
         WorldToProject = ViewToProject * WorldToView;
     }
 
-    void setOv(const vec3D<> &Ov) {
-        Camera3D::Ov = Ov;
-    }
-    void setT(const vec3D<> &T) {
-        Camera3D::T = T;
-    }
-    void setN(const vec3D<> &N) {
-        Camera3D::N = N;
-    }
     void incD(double i) {
-        D += i;
+        if (D < 32)
+            D += i;
     }
     void decD(double i) {
-        D -= i;
+        if (D > 12)
+            D -= i;
+    }
+
+    void moveCamera(int X, int Y)
+    {
+        static const double shift = 0.03125;
+
+        if (X < prevX0) // движение мыши влево
+            if (N(1) >= 0)
+            {
+                N(3, N(3) - shift);
+                N(1, N(1) + ((N(3) >= 0) ? shift : -shift));
+            }
+            else
+            {
+                N(3, N(3) + shift);
+                N(1, N(1) + ((N(3) <= 0) ? -shift : shift));
+            }
+        else
+            if (X > prevX0) // вправо
+                if (N(1) <= 0)
+                {
+                    N(3, N(3) - shift);
+                    N(1, N(1) + ((N(3) >= 0) ? -shift : shift));
+                }
+                else
+                {
+                    N(3, N(3) + shift);
+                    N(1, N(1) + ((N(3) <= 0) ? shift : -shift));
+                }
+
+//        if (Y < prevY0) // движение мыши вверх
+//            if (N(1) >= 0)
+//            {
+//                N(3, N(3) - shift);
+//                N(1, N(1) + ((N(3) >= 0) ? shift : -shift));
+//            }
+//            else
+//            {
+//                N(3, N(3) + shift);
+//                N(1, N(1) + ((N(3) <= 0) ? -shift : shift));
+//            }
+//        else
+//            if (Y > prevY0) // вниз
+//                if (N(1) <= 0)
+//                {
+//                    N(3, N(3) - shift);
+//                    N(1, N(1) + ((N(3) >= 0) ? -shift : shift));
+//                }
+//                else
+//                {
+//                    N(3, N(3) + shift);
+//                    N(1, N(1) + ((N(3) <= 0) ? shift : -shift));
+//                }
+
+        prevX0 = X;
+        prevY0 = Y;
     }
 };
 
