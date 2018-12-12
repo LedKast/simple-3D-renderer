@@ -39,7 +39,6 @@ Scene3D::Scene3D(double X0, double Y0, double px, double py) : Camera3D(X0, Y0, 
 void Scene3D::render(HDC dc) {
     HPEN pen;
 
-    // TODO если фигура уходит за экран - не отрисовывать
     for (int curr = 0; curr < modelcount; ++curr) // цикл по моделькам
     {
         (curr == currmodel) ?

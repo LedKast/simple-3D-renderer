@@ -32,7 +32,6 @@ public:
     double getProjVertexY(int i) { return projVertices(2, i) / getProjVertexZ(i); }
     double getProjVertexZ(int i) { return projVertices(3, i); }
 
-    double getPosZ() { return vertices(3, vertices.getCols()); }
     double getOVecZ() { return vertices(3, vertices.getCols()); }
 
     void project(Matrix<> P) { projVertices = P * vertices; } // проецирование модели.

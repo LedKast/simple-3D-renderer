@@ -37,9 +37,6 @@ public:
     Matrix<> getVertices() { return vertices; }
     Matrix<bool> getEdges() { return edges; }
 
-    double getPosX() { return vertices(1, vertices.getCols()); }
-    double getPosY() { return vertices(2, vertices.getCols()); }
-
     double getOVecX() { return vertices(1, vertices.getCols()); }
     double getOVecY() { return vertices(2, vertices.getCols()); }
 

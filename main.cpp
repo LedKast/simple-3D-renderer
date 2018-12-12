@@ -23,9 +23,6 @@
 
 Scene3D scene(WINW/2, WINH/2, DEFSCALE, DEFSCALE + 50);
 
-void rotationL0(double x, double y, double z, double angle);
-void relativeScaling(double, double);
-
 LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);						// прототип оконной процедуры
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)		// основнаRя процедура
 {
@@ -170,13 +167,19 @@ LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// окон�
                 /* complex affine transforms */
                 /// USE Z X C V
                 case 0x5A:  // Z
-                    rotationL0(2, -5.5, 1, RTSPEED); // TODO брать вектор из текущей точки
+                    scene.apply(rotationL0(
+//                            0, 0, 0,
+                            scene.getModel().getVertexX(5), scene.getModel().getVertexY(5), scene.getModel().getVertexZ(5),
+//                            2, -5.5, 1,
+                            scene.getModel().getVertexX(4), scene.getModel().getVertexY(4), scene.getModel().getVertexZ(4),
+                    		RTSPEED
+                    		));
                     break;
-//                case 0x58:  // X
-//                    scene.apply();
-//                    break;
+                case 0x58:  // X
+                    scene.apply(rotationX(RTSPEED));
+                    break;
 //                case 0x43:  // C
-//                    scene.apply();
+//					scene.apply();
 //                    break;
 //                case 0x56:  // V
 //                    scene.apply();
@@ -242,28 +245,6 @@ LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// окон�
 	}
 	return 0;
 }
-
-
-/* complex affine transforms 3D */
-
-// поворот вокруг вектора C0::С1(x,y,z), C0 - начало координат
-void rotationL0(double x, double y, double z, double angle)
-{
-    // текущие координаты центра фигуры
-
-	double currPosX = scene.getModel().getPosX();
-	double currPosY = scene.getModel().getPosY();
-	double currPosZ = scene.getModel().getPosZ();
-
-	scene.apply(
-//			translation3D(currPosX, currPosY, currPosZ) * // точка c0
-            (rotationX(-y, z) * rotationZ(-x, y)) *
-			rotationX(angle) *
-            (rotationZ(-x, -y) * rotationX(-y, -z))// *
-//			translation3D(-currPosX, -currPosY, -currPosZ)
-	);
-}
-
 
 /// составные 2D
 //void rotationL0(double angle)
