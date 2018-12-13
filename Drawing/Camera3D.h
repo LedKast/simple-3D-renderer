@@ -44,6 +44,7 @@ public:
         D = 16;
         T(2, 1);
 
+        //N(2, 0.2);
         N(3, 1);
 
         updateCamera();

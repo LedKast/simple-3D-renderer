@@ -93,7 +93,7 @@ Matrix<> rotation(double c, double s)
 }
 
 /// против часовой стрелки (counter-clockwise)
-Matrix<> crotationX(double c, double s)
+Matrix<> rotationX(double c, double s)
 {
     double d = 1.0/sqrt(c*c+s*s);
     double T[16] = {
@@ -103,7 +103,7 @@ Matrix<> crotationX(double c, double s)
             0, 0, 0, 1};
     return Matrix<>(4, T);
 }
-Matrix<> crotationY(double c, double s)
+Matrix<> rotationY(double c, double s)
 {
     double d = 1.0/sqrt(c*c+s*s);
     double T[16] = {
@@ -113,7 +113,7 @@ Matrix<> crotationY(double c, double s)
             0, 0, 0, 1};
     return Matrix<>(4, T);
 }
-Matrix<> crotationZ(double c, double s)
+Matrix<> rotationZ(double c, double s)
 {
     double d = 1.0/sqrt(c*c+s*s);
     double T[16] = {
@@ -123,8 +123,8 @@ Matrix<> crotationZ(double c, double s)
             0, 0, 0, 1};
     return Matrix<>(4, T);
 }
-/// по часовой стрелке (clockwise)
-Matrix<> rotationX(double c, double s)
+/// против часовой стрелки (counter clockwise)
+Matrix<> crotationX(double c, double s)
 {
     double d = 1.0/sqrt(c*c+s*s);
     double T[16] = {
@@ -134,7 +134,7 @@ Matrix<> rotationX(double c, double s)
             0, 0, 0, 1};
     return Matrix<>(4, T);
 }
-Matrix<> rotationY(double c, double s)
+Matrix<> crotationY(double c, double s)
 {
     double d = 1.0/sqrt(c*c+s*s);
     double T[16] = {
@@ -144,7 +144,7 @@ Matrix<> rotationY(double c, double s)
             0, 0, 0, 1};
     return Matrix<>(4, T);
 }
-Matrix<> rotationZ(double c, double s)
+Matrix<> crotationZ(double c, double s)
 {
     double d = 1.0/sqrt(c*c+s*s);
     double T[16] = {
@@ -242,15 +242,14 @@ Matrix<> rotationL0(
         double x2, double y2, double z2,
         double angle)
 {
-    // проблема в том, что поворот всегда против часовой стрелки
     double x3 = x2 - x1, y3 = y2 - y1, z3 = z2 - z1;
+    // TODO проверка на 0
     return
-//            translation3D(x1, y1, z1) * // точка c0
-            rotationX(-y3, -z3) * rotationZ(-x3, -y3) *
+            translation3D(x1, y1, z1) * // точка c0
+            rotationX(y3, z3) * rotationZ(x3, sqrt(y3*y3 + z3*z3)) * // y3
             rotationX(angle) *
-//            mapping3D(MAPX) *
-            crotationZ(-x3, -y3) * crotationX(-y3, -z3)// *
-//            translation3D(-x1, -y1, -z1)
+            rotationZ(x3, -sqrt(y3*y3 + z3*z3)) * rotationX(y3, -z3) * // y3
+            translation3D(-x1, -y1, -z1)
     ;
 }
 

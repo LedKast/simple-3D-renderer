@@ -16,7 +16,7 @@
 #define RTSPEED 3.14/24 // скорость вращения
 
 // TODO change PATH
-#define MODELSPATH "d:/DOCs/3_course/CGraphics/CG_3D_Scene/models/"
+#define MODELSPATH "d:/DOCs/3_course/CGraphics/Lab_3_3D_Scene/models/"
 #define DEFSCALE 50 	//стандартный масштаб сцены
 #define WINW 480
 #define WINH 320
@@ -170,7 +170,7 @@ LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// окон�
                     scene.apply(rotationL0(
 //                            0, 0, 0,
                             scene.getModel().getVertexX(5), scene.getModel().getVertexY(5), scene.getModel().getVertexZ(5),
-//                            2, -5.5, 1,
+//                            2, -10.5, 1,
                             scene.getModel().getVertexX(4), scene.getModel().getVertexY(4), scene.getModel().getVertexZ(4),
                     		RTSPEED
                     		));
@@ -178,9 +178,9 @@ LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// окон�
                 case 0x58:  // X
                     scene.apply(rotationX(RTSPEED));
                     break;
-//                case 0x43:  // C
-//					scene.apply();
-//                    break;
+                case 0x43:  // C
+					scene.apply(crotationX(0, 1));
+                    break;
 //                case 0x56:  // V
 //                    scene.apply();
 //                    break;
@@ -267,7 +267,7 @@ LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// окон�
 //{
 //	double currOVecX = scene.getModel().getOVecY();
 //	double currOVecY = scene.getModel().getOVecX();
-//
+//0000
 //	scene.getModel().apply(
 //			rotation(currOVecX, -currOVecY) *
 //			scaling(x, y) *
